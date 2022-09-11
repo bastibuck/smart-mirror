@@ -10,6 +10,7 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id String @id @default(cuid())
+model Screen {
+    id       String @id @default(cuid())
+    position Int    @unique
 }

@@ -4,7 +4,7 @@ import React from "react";
 import { FiMenu } from "react-icons/fi";
 
 const adminPages = [
-  { path: "/pages", title: "Pages" },
+  { path: "/screens", title: "Screens" },
   { path: "/sections", title: "Sections" },
   { path: "/apps", title: "Apps" },
 ];
