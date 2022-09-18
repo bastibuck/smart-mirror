@@ -21,7 +21,7 @@ const Screens: NextPageWithLayout = () => {
         Screens
       </h1>
 
-      <div className="carousel w-4/5">
+      <div className="carousel w-4/5 gap-10">
         {data?.map((screen) => {
           return (
             <div
