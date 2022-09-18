@@ -5,7 +5,6 @@ import { FiMenu } from "react-icons/fi";
 
 const adminPages = [
   { path: "/screens", title: "Screens" },
-  { path: "/sections", title: "Sections" },
   { path: "/apps", title: "Apps" },
 ];
 
