@@ -16,26 +16,28 @@ const Screens: NextPageWithLayout = () => {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-slate-700">
-      <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-white">
+    <main className="flex flex-col items-center min-h-screen bg-slate-700">
+      <h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-white mb-4">
         Screens
       </h1>
 
-      <div className="carousel w-4/5 gap-10">
+      <div className="carousel w-full flex-grow">
         {data?.map((screen) => {
           return (
             <div
               id={screen.id}
               key={screen.id}
-              className="carousel-item w-full bg-black h-64 flex justify-center items-center"
+              className="carousel-item w-full justify-center items-center"
             >
-              <h3 className="text-xl">{screen.id}</h3>
+              <div className="h-full aspect-[9/16] bg-black flex justify-center items-center">
+                <h3 className="text-xl">{screen.id}</h3>
+              </div>
             </div>
           );
         })}
       </div>
 
-      <div className="flex justify-center w-full py-2 gap-2">
+      <div className="flex justify-center w-full py-10 gap-2">
         {data?.map((screen, idx) => (
           <Link key={screen.id} href={`#${screen.id}`}>
             <a

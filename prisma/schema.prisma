@@ -14,3 +14,11 @@ model Screen {
     id       String @id @default(cuid())
     position Int    @unique
 }
+
+
+model App {
+    id       String @id @default(cuid())
+    name    String @unique
+    type    String     
+}
+
