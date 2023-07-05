@@ -4,6 +4,18 @@ import { api } from "~/utils/api";
 
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const examples = api.example.getAll.useQuery();
+  const createMutation = api.example.add.useMutation({
+    onSuccess: () => {
+      void examples.refetch();
+    },
+  });
+
+  const deleteMutation = api.example.delete.useMutation({
+    onSuccess: () => {
+      void examples.refetch();
+    },
+  });
 
   return (
     <>
@@ -44,6 +56,20 @@ export default function Home() {
           <p className="text-2xl text-white">
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
+
+          <button
+            className="rounded-lg bg-white/20 p-4"
+            onClick={() => createMutation.mutate()}
+          >
+            Add
+          </button>
+
+          <div className="text-white">
+            <h3>Examples:</h3>
+            {examples.data?.map((example) => (
+              <p key={example.id} onClick={() => deleteMutation.mutate(example.id)}>{example.createdAt.toISOString()}</p>
+            ))}
+          </div>
         </div>
       </main>
     </>
