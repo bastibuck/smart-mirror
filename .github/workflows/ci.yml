@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+
+      -
+        name: Build docker image
+        run: docker build -t smart-mirror-docker . && docker save -o ./smart-mirror.image.tar smart-mirror-docker
+      
+      -
+        name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: smart-mirror-image
+          path: ./smart-mirror.image.tar
+          if-no-files-found: error
