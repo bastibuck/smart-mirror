@@ -15,7 +15,7 @@ jobs:
 
       -
         name: Build docker image
-        run: docker build -t smart-mirror-docker . && docker save -o ./smart-mirror.image.tar smart-mirror-docker
+        run: docker build -t smart-mirror-image . && docker save -o ./smart-mirror.image.tar smart-mirror-image
       
       -
         name: Upload artifact
