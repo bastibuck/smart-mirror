@@ -67,7 +67,7 @@ export default function Home() {
           <div className="text-white">
             <h3>Examples:</h3>
             {examples.data?.map((example) => (
-              <p key={example.id} onClick={() => deleteMutation.mutate(example.id)}>{example.createdAt.toISOString()}</p>
+              <p className="text-2xl" key={example.id} onClick={() => deleteMutation.mutate(example.id)}>{example.createdAt.toISOString()}</p>
             ))}
           </div>
         </div>
