@@ -1,3 +1,33 @@
 #!/bin/bash
 
-echo "Hello world"
+set -e
+
+echo -e "\nProvide GitHub token with repo access"
+read GITHUB_TOKEN
+
+echo $GITHUB_TOKEN
+
+CONTAINER_NAME=smart-mirror
+
+# get newest artifact ID
+REPO_ARTIFACTS=$(curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/bastibuck/smart-mirror/actions/artifacts?per_page=1)
+
+ARTIFACT_ID=$(echo $REPO_ARTIFACTS | python -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id'])")
+
+# download and unzip artifact
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/repos/bastibuck/smart-mirror/actions/artifacts/$ARTIFACT_ID/zip --output smart-mirror.zip
+
+unzip smart-mirror.zip
+
+# load image into docker
+docker load -i smart-mirror.image.tar
+
+# remove old container
+docker container rm $CONTAINER_NAME
+
+# create and run new container
+docker run --detach -v ./mounted/db:/app/db -p 3000:3000 -e DATABASE_URL="file:db/db.sqlite" --name $CONTAINER_NAME smart-mirror-image
