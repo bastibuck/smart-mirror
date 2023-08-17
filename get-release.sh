@@ -3,9 +3,7 @@
 set -e
 
 echo -e "\nProvide GitHub token with repo access"
-read GITHUB_TOKEN
-
-echo $GITHUB_TOKEN
+read -s GITHUB_TOKEN
 
 CONTAINER_NAME=smart-mirror
 
