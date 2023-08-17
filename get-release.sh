@@ -29,7 +29,5 @@ docker load -i smart-mirror.image.tar
 # remove unused old images
 docker image prune
 
-docker run --rm -it -p 80:80 strm/helloworld-http
-
 # create and run new container, auto-remove container after stopping
-# docker run -d --rm -v ./mounted/db:/app/db -p 3000:3000 -e DATABASE_URL="file:db/db.sqlite" --name $CONTAINER_NAME smart-mirror-image
+docker run -d --rm -v ./mounted/db:/app/db -p 3000:3000 -e DATABASE_URL="file:db/db.sqlite" --name $CONTAINER_NAME smart-mirror-image
