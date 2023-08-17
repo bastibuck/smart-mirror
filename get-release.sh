@@ -19,7 +19,7 @@ curl -L \
   -H "X-GitHub-Api-Version: 2022-11-28" \
   https://api.github.com/repos/bastibuck/smart-mirror/actions/artifacts/$ARTIFACT_ID/zip --output smart-mirror.zip
 
-unzip smart-mirror.zip
+unzip -o smart-mirror.zip
 
 # load image into docker
 docker load -i smart-mirror.image.tar
