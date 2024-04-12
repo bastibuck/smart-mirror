@@ -19,7 +19,7 @@ Than you simply
 1. clone this repo
 1. make `get-release.sh` executable
 1. run `get-release.sh`
-1. smart-mirror container will be created and expose `http://[HOSTNAME/IP]:3000`
+1. smart-mirror container will be created and expose `http://[HOSTNAME/IP]`
 
 ### Updates
 
