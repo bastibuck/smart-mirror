@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM arm64v8/node:18-alpine AS deps
+FROM arm64v8/node:20-alpine AS deps
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN npm ci
 
 ##### BUILDER
 
-FROM arm64v8/node:18-alpine AS builder
+FROM arm64v8/node:20-alpine AS builder
 ARG DATABASE_URL
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -28,7 +28,7 @@ RUN SKIP_ENV_VALIDATION=1 npm run build
 
 ##### RUNNER
 
-FROM arm64v8/node:18-alpine AS runner
+FROM arm64v8/node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
