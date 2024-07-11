@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM arm64v8/node:20-alpine AS deps
+FROM  --platform=linux/arm64 arm64v8/node:20-alpine AS deps
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN npm ci
 
 ##### BUILDER
 
-FROM arm64v8/node:20-alpine AS builder
+FROM  --platform=linux/arm64 arm64v8/node:20-alpine AS builder
 
 # List of environment variables to be passed in from the .end.docker file
 ARG DATABASE_URL
@@ -32,7 +32,7 @@ RUN SKIP_ENV_VALIDATION=1 npm run build
 
 ##### RUNNER
 
-FROM arm64v8/node:20-alpine AS runner
+FROM  --platform=linux/arm64 arm64v8/node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
