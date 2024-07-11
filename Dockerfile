@@ -17,7 +17,11 @@ RUN npm ci
 ##### BUILDER
 
 FROM arm64v8/node:20-alpine AS builder
+
+# List of environment variables to be passed in from the .end.docker file
 ARG DATABASE_URL
+ARG TODOIST_API_TOKEN
+
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
