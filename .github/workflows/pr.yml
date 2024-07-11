@@ -6,7 +6,7 @@ on:
       - "main"
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,7 +21,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        run: SKIP_ENV_VALIDATION=1 npm run lint
 
       - name: Typecheck
         run: npm run tsc:check
