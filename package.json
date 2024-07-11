@@ -10,7 +10,8 @@
     "dev": "next dev --turbo",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "tsc:check": "tsc --noEmit"
   },
   "dependencies": {
     "@doist/todoist-api-typescript": "^3.0.3",
