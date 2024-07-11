@@ -42,3 +42,6 @@ yarn-error.log*
 *.tsbuildinfo
 
 TODO
+
+#docker env file
+.env.docker
