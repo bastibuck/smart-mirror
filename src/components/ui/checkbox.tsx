@@ -35,14 +35,14 @@ const CheckboxWithLabel: React.FC<
   <div
     className={cn(
       "flex items-center space-x-2",
-      variant === "danger" ? "text-destructive" : "text-primary",
+      variant === "danger" ? "text-red-400" : "text-primary",
     )}
   >
     <Checkbox
       {...props}
       className={cn(
         "flex items-center space-x-2",
-        variant === "danger" ? "border-destructive" : "",
+        variant === "danger" ? "border-red-400" : "",
         props.className,
       )}
     />

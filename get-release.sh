@@ -26,4 +26,4 @@ docker load -i smart-mirror.image.tar
 docker image prune -f
 
 # create and run new container, auto-remove container after stopping
-docker run -d -v ./mounted/db:/app/db -p 80:80 -e DATABASE_URL="file:db/db.sqlite" --name smart-mirror --rm smart-mirror-image
+docker run -d -v ./mounted/db:/app/db -p 80:80 --env-file ./.env.docker --name smart-mirror --rm smart-mirror-image
