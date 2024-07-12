@@ -31,6 +31,6 @@ Should be as simple as running `get-release.sh` again. It will download a new ve
 | ------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
 | Start              | `sudo docker start smart-mirror`                                                              |                         |
 | Stop               | `sudo docker stop smart-mirror`                                                               |                         |
-| Follow logs        | `docker logs -f smart-mirror`                                                                 |
+| Follow logs        | `sudo docker logs -f smart-mirror`                                                            |
 | Run app in browser | `DISPLAY=:0 chromium-browser http://localhost:80 --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
 | Stop browser       | `sudo killall chromium-browser`                                                               |                         |

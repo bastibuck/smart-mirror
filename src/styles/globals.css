@@ -41,6 +41,7 @@
     @apply border-border;
   }
   body {
+    @apply cursor-none;
     @apply bg-background text-foreground;
   }
 }
