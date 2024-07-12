@@ -23,6 +23,7 @@ const ToDos: React.FC = () => {
         <CheckboxWithLabel
           variant={todo.isOverdue ? "danger" : undefined}
           key={todo.id}
+          size="+2"
         >
           {todo.content}
         </CheckboxWithLabel>
