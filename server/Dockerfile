@@ -27,4 +27,4 @@ WORKDIR /app
 
 COPY --from=builder /app/smart-mirror-backend /app/smart-mirror-backend
 
-CMD ["/server/smart-mirror-backend"]
+CMD ["/app/smart-mirror-backend"]
