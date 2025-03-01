@@ -25,14 +25,14 @@ jobs:
           context: ./server
           platforms: linux/arm/v8
           push: false
-          tags: smart-mirror-server
-          outputs: type=docker,dest=./smart-mirror-server.image.tar
+          tags: smart-mirror-backend
+          outputs: type=docker,dest=./smart-mirror-backend.image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: smart-mirror-server
-          path: ./smart-mirror-server.image.tar
+          name: smart-mirror-backend
+          path: ./smart-mirror-backend.image.tar
           if-no-files-found: error
