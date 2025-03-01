@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+  workflow_dispatch: # Add this line to enable manual triggering
 
 jobs:
   build:
@@ -21,17 +22,17 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./server
           platforms: linux/arm/v8
           push: false
-          tags: smart-mirror-image
-          outputs: type=docker,dest=./smart-mirror.image.tar
+          tags: smart-mirror-server
+          outputs: type=docker,dest=./smart-mirror-server.image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: smart-mirror-image
-          path: ./smart-mirror.image.tar
+          name: smart-mirror-server
+          path: ./smart-mirror-server.image.tar
           if-no-files-found: error
