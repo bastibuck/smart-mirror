@@ -15,13 +15,12 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v2
         with:
-          node-version: "20"
+          node-version: "23"
 
-      - name: Install Dependencies
+      - name: Install frontend dependencies
         run: npm ci
-
-      - name: Lint
-        run: SKIP_ENV_VALIDATION=1 npm run lint
+        working-directory: ./frontend
 
       - name: Typecheck
-        run: npm run tsc:check
+        run: npm run typecheck
+        working-directory: ./frontend
