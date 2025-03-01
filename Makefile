@@ -1,23 +1,52 @@
-.PHONY: default build-backend run-backend build-frontend run-frontend stop-backend stop-frontend
+.PHONY: default start stop start-backend stop-backend rebuild-backend start-frontend stop-frontend rebuild-frontend
 
-default: build-backend run-backend build-frontend run-frontend
+default: start
 
 # backend 
-build-backend:
-	docker build -t smart-mirror-backend ./server
-
-run-backend:
-	docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend
+start-backend:
+	@if [ $$(docker ps -a -q -f name=smart-mirror-backend) ]; then \
+		echo "Re-starting smart-mirror-backend..."; \
+		docker start smart-mirror-backend; \
+	else \
+		echo "Building smart-mirror-backend..."; \
+		docker build -t smart-mirror-backend ./server; \
+		docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend; \
+	fi
 
 stop-backend:
 	docker stop smart-mirror-backend
 
-# frontend
-build-frontend:
-	docker build -t smart-mirror-frontend ./frontend
+rebuild-backend:
+	docker stop smart-mirror-backend
+	docker container rm smart-mirror-backend
+	docker build -t smart-mirror-backend ./server
+	docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend
 
-run-frontend:
-	docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend
+# frontend
+start-frontend:
+	@if [ $$(docker ps -a -q -f name=smart-mirror-frontend) ]; then \
+		echo "Re-starting smart-mirror-frontend..."; \
+		docker start smart-mirror-frontend; \
+	else \
+		echo "Building smart-mirror-frontend..."; \
+		docker build -t smart-mirror-frontend ./frontend; \
+		docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend; \
+	fi
 
 stop-frontend:
 	docker stop smart-mirror-frontend
+
+rebuild-frontend: 
+	docker stop smart-mirror-frontend
+	docker container rm smart-mirror-frontend
+	docker build -t smart-mirror-frontend ./frontend
+	docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend
+
+# start all
+start: start-backend start-frontend
+
+# stop all
+stop: stop-backend stop-frontend
+
+# rebuild all
+rebuild: rebuild-backend rebuild-frontend
