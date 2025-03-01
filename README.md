@@ -35,3 +35,7 @@ This repo includes a Makefile that abstracts all commands.
 | ------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
 | Run app in browser | `DISPLAY=:0 chromium-browser http://localhost:80 --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
 | Stop browser       | `sudo killall chromium-browser`                                                               |                         |
+
+## Development
+
+For local development you just run `docker compose up` which will start the frontend and backend services with hot-reloading.
