@@ -4,7 +4,7 @@ default: start
 
 # backend 
 start-backend:
-	@if [ $$(docker ps -a -q -f name=smart-mirror-backend) ]; then \
+	@if [ $$(docker ps -a --filter "name=^/smart-mirror-backend$$" -q) ]; then \
 		echo "Re-starting smart-mirror-backend..."; \
 		docker start smart-mirror-backend; \
 	else \
@@ -24,7 +24,7 @@ rebuild-backend:
 
 # frontend
 start-frontend:
-	@if [ $$(docker ps -a -q -f name=smart-mirror-frontend) ]; then \
+	@if [ $$(docker ps -a --filter "name=^/smart-mirror-frontend$$" -q) ]; then \
 		echo "Re-starting smart-mirror-frontend..."; \
 		docker start smart-mirror-frontend; \
 	else \
