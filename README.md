@@ -1,36 +1,41 @@
 # Smart Mirror
 
-## Setup, starting and stopping
-
-### Initial setup
-
-This repo includes a script to download and run the newest "release" (it's more like a **nightly** build of the `main` branch currently) automatically.
+## Requirements
 
 You would need
 
-- 64bit system e.g. Raspberry Pi 4
-- `ssh`, `git` and `docker` installed and setup
-- a GitHub account with your ssh key connected
+- `git` and `docker` installed
 
----
-
-Than you simply
+## Get started
 
 1. clone this repo
-1. make `get-release.sh` executable (`chmod +x get-release.sh`)
-1. run `get-release.sh`
-1. smart-mirror container will be created and expose `http://[HOSTNAME/IP]`
+1. run `make`
+1. smart-mirror services will be started exposed on `http://localhost`
 
-### Updates
+## Commands
 
-Should be as simple as running `get-release.sh` again. It will download a new version, remove old docker images and rebuild a new container from the new image.
+This repo includes a Makefile that abstracts all commands.
 
-### Some helpful commands (for me mostly 😂)
+| Command                 | Desc                                 |
+| ----------------------- | ------------------------------------ |
+| `make`                  | starts all services                  |
+| `make start`            | starts all services                  |
+| `make stop`             | stops all services                   |
+| `make rebuild`          | rebuild all services after an update |
+| `make start-frontend`   | start only frontend                  |
+| `make start-backend`    | start only backend                   |
+| `make stop-frontend`    | stop only frontend                   |
+| `make stop-backend`     | stop only backend                    |
+| `make rebuild-frontend` | rebuild only frontend                |
+| `make rebuild-backend`  | rebuild only backend                 |
+
+### Some other helpful commands (for me mostly 😂)
 
 | Task               | Desc                                                                                          | Notes                   |
 | ------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
-| Start              | `sudo docker start smart-mirror`                                                              |                         |
-| Stop               | `sudo docker stop smart-mirror`                                                               |                         |
-| Follow logs        | `sudo docker logs -f smart-mirror`                                                            |
 | Run app in browser | `DISPLAY=:0 chromium-browser http://localhost:80 --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
 | Stop browser       | `sudo killall chromium-browser`                                                               |                         |
+
+## Development
+
+For local development you just run `docker compose up` which will start the frontend and backend services with hot-reloading.

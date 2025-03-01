@@ -1,0 +1,29 @@
+services:
+  backend:
+    container_name: smart-mirror-backend-dev
+    image: smart-mirror-backend-dev
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev
+
+    ports:
+      - 8080:8080
+
+    volumes:
+      - ./server/:/app/
+
+  frontend:
+    container_name: smart-mirror-frontend-dev
+    image: smart-mirror-frontend-dev
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+
+    ports:
+      - 3000:3000
+
+    volumes:
+      - ./frontend/:/app
+      - /app/node_modules # avoid node_modules being overwritten from the host machine
