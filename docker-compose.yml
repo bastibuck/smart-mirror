@@ -1,6 +1,7 @@
 services:
   backend:
-    container_name: smart-mirror-backend
+    container_name: smart-mirror-backend-dev
+    image: smart-mirror-backend-dev
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -13,7 +14,8 @@ services:
       - ./server/:/app/
 
   frontend:
-    container_name: smart-mirror-frontend
+    container_name: smart-mirror-frontend-dev
+    image: smart-mirror-frontend-dev
     build:
       context: ./frontend
       dockerfile: Dockerfile
