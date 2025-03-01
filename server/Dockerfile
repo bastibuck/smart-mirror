@@ -1,18 +1,18 @@
 FROM golang:1.24-alpine AS builder
 
-WORKDIR /server
+WORKDIR /app
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN go build -o /server/smart-mirror-backend
+RUN go build -o /app/smart-mirror-backend
 
 # Development stage (target: dev)
 FROM golang:1.24-alpine AS dev
 
-WORKDIR /server
+WORKDIR /app
 
 RUN go install github.com/air-verse/air@latest
 
@@ -23,8 +23,8 @@ CMD ["air"]
 # Production stage (target: prod)
 FROM alpine:latest AS prod
 
-WORKDIR /server
+WORKDIR /app
 
-COPY --from=builder /server/smart-mirror-backend /server/smart-mirror-backend
+COPY --from=builder /app/smart-mirror-backend /app/smart-mirror-backend
 
 CMD ["/server/smart-mirror-backend"]
