@@ -13,7 +13,7 @@ func main() {
 	router := chi.NewRouter()
 
 	router.Get("/", func(res http.ResponseWriter, req *http.Request) {
-		res.Wrdite([]byte("Hello World!"))
+		res.Write([]byte("Hello World!"))
 	})
 
 	// Start the server
