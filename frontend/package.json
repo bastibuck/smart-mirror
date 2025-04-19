@@ -8,7 +8,9 @@
     "build": "vite build",
     "serve": "vite preview",
     "start": "vite",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.116.1",
@@ -20,6 +22,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.116.0",
     "@tanstack/react-router-devtools": "^1.116.0",
+    "prettier": "^3.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   }
