@@ -1,5 +1,5 @@
 # Base stage
-FROM node:23 AS base
+FROM node:23-slim AS base
 
 WORKDIR /app
 
