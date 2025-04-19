@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "start": "vite",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write ."
   },
