@@ -8,7 +8,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <div className="flex h-screen w-screen flex-col items-center justify-center bg-gray-800 text-white">
+      <div className="widget-grid h-screen w-screen bg-gray-800 text-white">
         <Outlet />
       </div>
 

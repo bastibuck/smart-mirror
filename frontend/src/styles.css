@@ -1,1 +1,58 @@
 @import "tailwindcss";
+
+/**
+ * Widget styles
+ */
+.widget-grid {
+  --cols: 3;
+  --rows: 4;
+
+  --size-large: 2;
+  --size-full: var(--cols);
+
+  display: grid;
+  grid-template-rows: var(--rows);
+  grid-template-columns: var(--cols);
+
+  .widget {
+    &.widget--top-left {
+      grid-area: 1 / 1;
+      text-align: left;
+
+      &.widget--large {
+        grid-column: span var(--size-large);
+      }
+    }
+
+    &.widget--top-right {
+      grid-area: 1 / var(--cols);
+      text-align: right;
+
+      &.widget--large {
+        grid-column: var(--size-large) / span var(--size-large);
+      }
+    }
+
+    &.widget--bottom-left {
+      grid-area: var(--rows) / 1;
+      text-align: left;
+
+      &.widget--large {
+        grid-column: span var(--size-large);
+      }
+    }
+
+    &.widget--bottom-right {
+      grid-area: var(--rows) / var(--cols);
+      text-align: right;
+
+      &.widget--large {
+        grid-column: var(--size-large) / span var(--size-large);
+      }
+    }
+
+    &.widget--full {
+      grid-column: span var(--size-full);
+    }
+  }
+}
