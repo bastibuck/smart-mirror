@@ -8,7 +8,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <div className="widget-grid h-screen w-screen bg-gray-800 text-white">
+      <div className="widget-grid h-screen w-screen bg-black px-2 py-4 text-white">
         <Outlet />
       </div>
 
