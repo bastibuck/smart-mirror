@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import QuoteOfTheDay from "../widgets/quote-of-the-day/QuoteOfTheDay";
+import StravaProgress from "../widgets/strava/Progress";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -8,8 +8,7 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   return (
     <>
-      <QuoteOfTheDay position="top-right" size="large" />
-      <QuoteOfTheDay position="bottom-left" size="large" />
+      <StravaProgress position="center" />
     </>
   );
 }
