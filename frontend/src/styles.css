@@ -5,14 +5,14 @@
  */
 .widget-grid {
   --cols: 3;
-  --rows: 4;
+  --rows: 5;
 
   --size-large: 2;
   --size-full: var(--cols);
 
   display: grid;
-  grid-template-rows: var(--rows);
-  grid-template-columns: var(--cols);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  grid-template-columns: repeat(var(--cols), 1fr);
 
   .widget {
     &.widget--top-left {
@@ -36,6 +36,7 @@
     &.widget--bottom-left {
       grid-area: var(--rows) / 1;
       text-align: left;
+      place-content: end;
 
       &.widget--large {
         grid-column: span var(--size-large);
@@ -45,9 +46,20 @@
     &.widget--bottom-right {
       grid-area: var(--rows) / var(--cols);
       text-align: right;
+      place-content: end;
 
       &.widget--large {
         grid-column: var(--size-large) / span var(--size-large);
+      }
+    }
+
+    &.widget--center {
+      grid-area: calc(var(--rows) / 2) / calc(var(--cols) / 2);
+      text-align: center;
+      place-content: center;
+
+      &.widget--large {
+        grid-column: span var(--size-large);
       }
     }
 

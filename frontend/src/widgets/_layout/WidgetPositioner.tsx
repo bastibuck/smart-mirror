@@ -1,6 +1,11 @@
 import clsx from "clsx";
 
-type Postion = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+type Postion =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "center";
 type Size = "large" | "full";
 
 const WidgetPositioner: React.FC<
