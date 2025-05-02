@@ -17,6 +17,7 @@
     "@radix-ui/react-progress": "^1.1.4",
     "@tailwindcss/vite": "^4.1.5",
     "@tanstack/react-query": "^5.75.1",
+    "@tanstack/react-query-devtools": "^5.75.1",
     "@tanstack/react-router": "^1.119.0",
     "@tanstack/react-router-devtools": "^1.119.1",
     "class-variance-authority": "^0.7.1",
