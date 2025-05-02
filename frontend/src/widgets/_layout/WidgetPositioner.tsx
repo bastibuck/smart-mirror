@@ -14,6 +14,7 @@ const WidgetPositioner: React.FC<
   const positionClass = `widget widget--${position}`;
   const sizeClass = size ? `widget--${size}` : "";
 
+  // TODO: try moving this to tailwind
   return <div className={clsx(positionClass, sizeClass)}>{children}</div>;
 };
 

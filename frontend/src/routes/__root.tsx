@@ -17,14 +17,14 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <div className="dark">
+    <>
       <QueryClientProvider client={queryClient}>
-        <div className="widget-grid h-screen w-screen bg-black p-4 text-white">
+        <div className="widget-grid">
           <Outlet />
         </div>
       </QueryClientProvider>
 
       <TanStackRouterDevtools position="bottom-right" />
-    </div>
+    </>
   );
 }
