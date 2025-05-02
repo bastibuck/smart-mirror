@@ -10,16 +10,16 @@ const StravaProgress: React.FC<
     queryKey: ["strava-progress"],
     queryFn: () => ({
       running: {
-        hours: 300,
-        distance: 100,
+        time_s: 300,
+        distance_m: 100,
       },
       cycling: {
-        hours: 300,
-        distance: 100,
+        time_s: 300,
+        distance_m: 100,
       },
       kiting: {
-        hours: 300,
-        distance: 100,
+        time_s: 300,
+        distance_m: 100,
       },
     }),
   });
