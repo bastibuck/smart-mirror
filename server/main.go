@@ -13,17 +13,17 @@ import (
 
 // Define a struct for the sports data
 type SportStats struct {
-	Count      int `json:"count"`
-	MovingTime int `json:"moving_time"`
-	Distance   int `json:"distance"`
+	Count       int `json:"count"`
+	MovingTimeS int `json:"moving_time_s"`
+	Distance    int `json:"distance"`
 }
 
 // Constructor function for SportStats
-func NewSportStats(count, movingTime, distance int) SportStats {
+func NewSportStats(count, movingTimeS, distance int) SportStats {
 	return SportStats{
-		Count:      count,
-		MovingTime: movingTime,
-		Distance:   distance,
+		Count:       count,
+		MovingTimeS: movingTimeS,
+		Distance:    distance,
 	}
 }
 
@@ -31,7 +31,6 @@ func NewSportStats(count, movingTime, distance int) SportStats {
 type StravaStats struct {
 	Running SportStats `json:"running"`
 	Cycling SportStats `json:"cycling"`
-	Kiting  SportStats `json:"kiting"`
 }
 
 func main() {
@@ -41,7 +40,7 @@ func main() {
 	}
 
 	// Validate required environment variables
-	requiredKeys := []string{"STRAVA_ACCESS_TOKEN"}
+	requiredKeys := []string{"STRAVA_ACCESS_TOKEN", "STRAVA_ATHLETE_ID"}
 	for _, key := range requiredKeys {
 		if os.Getenv(key) == "" {
 			fmt.Printf("Missing required environment variable: %s\n", key)
@@ -72,21 +71,80 @@ func setupRouter() *chi.Mux {
 	})
 
 	router.Get("/strava-stats", func(res http.ResponseWriter, req *http.Request) {
-		// accessToken := os.Getenv("STRAVA_ACCESS_TOKEN")
+		// TODO? cache?
 
-		data := StravaStats{
-			Running: NewSportStats(10, 200, 186),
-			Cycling: NewSportStats(20, 300, 305),
-			Kiting:  NewSportStats(30, 400, 237),
+		stravaResponse, err := fetchStravaData()
+		if err != nil {
+			http.Error(res, fmt.Sprintf("Failed to fetch data from Strava: %v", err), http.StatusInternalServerError)
+			return
 		}
 
-		// Set the response header to JSON
 		res.Header().Set("Content-Type", "application/json")
 
-		if err := json.NewEncoder(res).Encode(data); err != nil {
+		if err := json.NewEncoder(res).Encode(stravaResponse); err != nil {
 			http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
 		}
 	})
 
 	return router
+}
+
+func fetchStravaData() (StravaStats, error) {
+	athleteID := os.Getenv("STRAVA_ATHLETE_ID")
+	accessToken := os.Getenv("STRAVA_ACCESS_TOKEN")
+
+	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%s/stats", athleteID)
+
+	req, err := http.NewRequest("GET", stravaAPIURL, nil)
+	if err != nil {
+		return StravaStats{}, err
+	}
+
+	// Add the Authorization header
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+
+	// Make the HTTP request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return StravaStats{}, err
+	}
+	defer resp.Body.Close()
+
+	// Check if the response status is OK
+	if resp.StatusCode != http.StatusOK {
+		return StravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+	}
+
+	// Parse the response body
+	var stravaAPIResponse struct {
+		YtdRideTotals struct {
+			Count      int     `json:"count"`
+			Distance   int     `json:"distance"`
+			MovingTime float32 `json:"moving_time"`
+		} `json:"ytd_ride_totals"`
+		YtdRunTotals struct {
+			Count      int     `json:"count"`
+			Distance   int     `json:"distance"`
+			MovingTime float32 `json:"moving_time"`
+		} `json:"ytd_run_totals"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&stravaAPIResponse); err != nil {
+		return StravaStats{}, err
+	}
+
+	// Map the Strava API response to your StravaStats struct
+	return StravaStats{
+		Cycling: NewSportStats(
+			stravaAPIResponse.YtdRideTotals.Count,
+			int(stravaAPIResponse.YtdRideTotals.MovingTime),
+			stravaAPIResponse.YtdRideTotals.Distance,
+		),
+		Running: NewSportStats(
+			stravaAPIResponse.YtdRunTotals.Count,
+			int(stravaAPIResponse.YtdRunTotals.MovingTime),
+			stravaAPIResponse.YtdRunTotals.Distance,
+		),
+	}, nil
 }
