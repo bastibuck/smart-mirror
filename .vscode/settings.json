@@ -1,3 +1,19 @@
 {
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "go.formatTool": "goimports",
+  "editor.formatOnSave": true,
+
+  // go-specific settings
+  "[go]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  "[go.mod]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  }
 }

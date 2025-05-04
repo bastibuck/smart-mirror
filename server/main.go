@@ -45,10 +45,10 @@ func setupRouter() *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
-		AllowedMethods:   []string{"GET", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Content-Type"},
-		MaxAge:           300,
+		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowedMethods: []string{"GET", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Content-Type"},
+		MaxAge:         300,
 	}))
 
 	router.Get("/", func(res http.ResponseWriter, req *http.Request) {
