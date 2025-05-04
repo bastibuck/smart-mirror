@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import StravaProgress from "../widgets/strava/Progress";
+import AnnualStats from "@/widgets/strava/AnnualStats";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   return (
     <>
-      <StravaProgress position="center" />
+      <AnnualStats position="bottom-right" />
     </>
   );
 }
