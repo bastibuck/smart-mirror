@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 )
 
 // Define a struct for the sports data
@@ -42,6 +43,13 @@ func main() {
 
 func setupRouter() *chi.Mux {
 	router := chi.NewRouter()
+
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		MaxAge:           300,
+	}))
 
 	router.Get("/", func(res http.ResponseWriter, req *http.Request) {
 		res.Write([]byte("Hello World!"))
