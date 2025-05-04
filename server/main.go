@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/joho/godotenv"
 )
 
 // Define a struct for the sports data
@@ -33,6 +35,20 @@ type StravaStats struct {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
+	// Validate required environment variables
+	requiredKeys := []string{"STRAVA_ACCESS_TOKEN"}
+	for _, key := range requiredKeys {
+		if os.Getenv(key) == "" {
+			fmt.Printf("Missing required environment variable: %s\n", key)
+			os.Exit(1)
+		}
+	}
+
 	fmt.Println("Starting the application...")
 
 	router := setupRouter()
@@ -56,6 +72,8 @@ func setupRouter() *chi.Mux {
 	})
 
 	router.Get("/strava-stats", func(res http.ResponseWriter, req *http.Request) {
+		// accessToken := os.Getenv("STRAVA_ACCESS_TOKEN")
+
 		data := StravaStats{
 			Running: NewSportStats(10, 200, 186),
 			Cycling: NewSportStats(20, 300, 305),
