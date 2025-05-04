@@ -7,7 +7,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // global refetch interval for all queries, server is in charge of caching data if needed
-      refetchInterval: 1000 * 60 * 0.5, // 5 minutes
+      refetchInterval: 1000 * 60 * 5, // 5 minutes
     },
   },
 });
