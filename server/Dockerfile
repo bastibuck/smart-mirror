@@ -25,6 +25,7 @@ FROM alpine:latest AS prod
 
 WORKDIR /app
 
+COPY --from=builder /app/.env /app/.env
 COPY --from=builder /app/smart-mirror-backend /app/smart-mirror-backend
 
 CMD ["/app/smart-mirror-backend"]
