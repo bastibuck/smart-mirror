@@ -10,11 +10,13 @@ import (
 const (
 	EnvStravaAccessToken = "STRAVA_ACCESS_TOKEN"
 	EnvStravaAthleteID   = "STRAVA_ATHLETE_ID"
+	EnvCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
 )
 
 var RequiredEnvKeys = []string{
 	EnvStravaAccessToken,
 	EnvStravaAthleteID,
+	EnvCorsAllowedOrigin,
 }
 
 func ValidateEnvVars() {

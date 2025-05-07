@@ -33,22 +33,25 @@ type StravaStats struct {
 	Cycling SportStats `json:"cycling"`
 }
 
+const serverPort = "8080"
+
 func main() {
 	config.ValidateEnvVars()
 
-	fmt.Println("Starting the application...")
+	fmt.Printf("Starting the application on port %s\n", serverPort)
 
 	router := setupRouter()
 
-	// Start the server
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":"+serverPort, router)
 }
 
 func setupRouter() *chi.Mux {
+	corsAllowedOrigin := os.Getenv(config.EnvCorsAllowedOrigin)
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000"},
+		AllowedOrigins: []string{corsAllowedOrigin},
 		AllowedMethods: []string{"GET", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Content-Type"},
 		MaxAge:         300,
