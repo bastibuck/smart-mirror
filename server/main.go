@@ -33,10 +33,10 @@ type StravaStats struct {
 	Cycling SportStats `json:"cycling"`
 }
 
-const serverPort = "8080"
-
 func main() {
 	config.ValidateEnvVars()
+
+	serverPort := os.Getenv(config.EnvServerPort)
 
 	fmt.Printf("Starting the application on port %s\n", serverPort)
 
