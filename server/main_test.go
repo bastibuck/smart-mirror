@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"smartmirror.server/routes"
 )
 
 func TestRootEndpoint(t *testing.T) {
-	router := setupRouter()
+	router := routes.SetupRouter()
 
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
