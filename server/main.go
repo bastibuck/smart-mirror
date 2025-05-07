@@ -33,21 +33,24 @@ type StravaStats struct {
 	Cycling SportStats `json:"cycling"`
 }
 
-func main() {
-	err := godotenv.Load()
-	if err != nil {
+// Validate required environment variables and exit if validation fails.
+func validateEnvVars() {
+	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)
 	}
 
-	// Validate required environment variables
 	requiredKeys := []string{"STRAVA_ACCESS_TOKEN", "STRAVA_ATHLETE_ID"}
 	for _, key := range requiredKeys {
 		if os.Getenv(key) == "" {
-			fmt.Printf("Missing required environment variable: %s\n", key)
+			fmt.Printf("Error: missing required environment variable: %s\n", key)
 			os.Exit(1)
 		}
 	}
+}
+
+func main() {
+	validateEnvVars()
 
 	fmt.Println("Starting the application...")
 
