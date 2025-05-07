@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/patrickmn/go-cache"
 	"smartmirror.server/config"
 )
 
@@ -32,6 +34,8 @@ type StravaStats struct {
 	Running SportStats `json:"running"`
 	Cycling SportStats `json:"cycling"`
 }
+
+var stravaCache = cache.New(30*time.Minute, 45*time.Hour)
 
 func main() {
 	config.ValidateEnvVars()
@@ -81,6 +85,12 @@ func setupRouter() *chi.Mux {
 }
 
 func fetchStravaData() (StravaStats, error) {
+	const cacheKey = "strava-stats"
+
+	if cachedData, found := stravaCache.Get(cacheKey); found {
+		return cachedData.(StravaStats), nil
+	}
+
 	athleteID := os.Getenv(config.EnvStravaAthleteID)
 	accessToken := os.Getenv(config.EnvStravaAccessToken)
 
@@ -125,8 +135,7 @@ func fetchStravaData() (StravaStats, error) {
 		return StravaStats{}, err
 	}
 
-	// Map the Strava API response to your StravaStats struct
-	return StravaStats{
+	stats := StravaStats{
 		Cycling: NewSportStats(
 			stravaAPIResponse.YtdRideTotals.Count,
 			int(stravaAPIResponse.YtdRideTotals.MovingTime),
@@ -137,5 +146,9 @@ func fetchStravaData() (StravaStats, error) {
 			int(stravaAPIResponse.YtdRunTotals.MovingTime),
 			stravaAPIResponse.YtdRunTotals.Distance,
 		),
-	}, nil
+	}
+
+	stravaCache.Set(cacheKey, stats, cache.DefaultExpiration)
+
+	return stats, nil
 }
