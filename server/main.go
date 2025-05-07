@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"github.com/joho/godotenv"
+	"smartmirror.server/config"
 )
 
 // Define a struct for the sports data
@@ -33,24 +33,8 @@ type StravaStats struct {
 	Cycling SportStats `json:"cycling"`
 }
 
-// Validate required environment variables and exit if validation fails.
-func validateEnvVars() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-		os.Exit(1)
-	}
-
-	requiredKeys := []string{"STRAVA_ACCESS_TOKEN", "STRAVA_ATHLETE_ID"}
-	for _, key := range requiredKeys {
-		if os.Getenv(key) == "" {
-			fmt.Printf("Error: missing required environment variable: %s\n", key)
-			os.Exit(1)
-		}
-	}
-}
-
 func main() {
-	validateEnvVars()
+	config.ValidateEnvVars()
 
 	fmt.Println("Starting the application...")
 
@@ -94,8 +78,8 @@ func setupRouter() *chi.Mux {
 }
 
 func fetchStravaData() (StravaStats, error) {
-	athleteID := os.Getenv("STRAVA_ATHLETE_ID")
-	accessToken := os.Getenv("STRAVA_ACCESS_TOKEN")
+	athleteID := os.Getenv(config.EnvStravaAthleteID)
+	accessToken := os.Getenv(config.EnvStravaAccessToken)
 
 	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%s/stats", athleteID)
 
