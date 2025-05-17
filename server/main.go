@@ -14,7 +14,7 @@ func main() {
 
 	serverPort := os.Getenv(config.EnvServerPort)
 
-	fmt.Printf("Starting the application on port %s\n", serverPort)
+	fmt.Printf("Starting the application on http://localhost:%s\n", serverPort)
 
 	router := routes.SetupRouter()
 
