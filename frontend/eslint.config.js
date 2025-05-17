@@ -36,6 +36,14 @@ export default defineConfig([
     },
     rules: {
       "react/prop-types": "off",
+      "no-restricted-imports": [
+        "error",
+        {
+          name: "clsx",
+          message:
+            "We have a convienience wrapper for clsx called 'cn' that uses tailwind-merge to avoid conflicts.",
+        },
+      ],
     },
   },
 ]);

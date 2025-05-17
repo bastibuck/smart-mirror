@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 type Postion =
   | "top-left"
@@ -15,7 +15,7 @@ const WidgetPositioner: React.FC<
   const sizeClass = size ? `widget--${size}` : "";
 
   // TODO: try moving this to tailwind
-  return <div className={clsx(positionClass, sizeClass)}>{children}</div>;
+  return <div className={cn(positionClass, sizeClass)}>{children}</div>;
 };
 
 export default WidgetPositioner;
