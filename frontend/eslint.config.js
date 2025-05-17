@@ -12,11 +12,6 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     plugins: { js },
     extends: ["js/recommended"],
-    rules: [
-      {
-        "react/prop-types": "off",
-      },
-    ],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
@@ -30,4 +25,25 @@ export default defineConfig([
   ...pluginQuery.configs["flat/recommended"],
 
   eslintConfigPrettier,
+
+  // Overrides at the end to ensure they are not overwritten
+  {
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+    rules: {
+      "react/prop-types": "off",
+      "no-restricted-imports": [
+        "error",
+        {
+          name: "clsx",
+          message:
+            "We have a convienience wrapper for clsx called 'cn' that uses tailwind-merge to avoid conflicts.",
+        },
+      ],
+    },
+  },
 ]);

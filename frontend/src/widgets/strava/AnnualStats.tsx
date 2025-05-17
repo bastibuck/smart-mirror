@@ -1,12 +1,14 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import { z } from "zod";
 import { fetchUtil } from "@/lib/api";
+import { Bike, Turtle } from "lucide-react";
 
 const SportsStatsSchema = z.object({
   count: z.number(),
-  distance: z.number(),
+  distance_m: z.number(),
   moving_time_s: z.number(),
 });
 
@@ -20,8 +22,7 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 }) => {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["strava-annual-stats"],
-    queryFn: () =>
-      fetchUtil("http://localhost:8080/strava-stats", AnnualStatsSchema),
+    queryFn: () => fetchUtil("/strava-stats", AnnualStatsSchema),
   });
 
   if (isError) {
@@ -43,68 +44,59 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
-      <div className="mb-7 grid grid-cols-3 gap-x-12 gap-y-1">
-        <h2 className="col-span-3 text-3xl font-bold text-pretty">Cycling</h2>
+      <StatCategory name={<Bike size={36} />}>
+        <StatValue label="Count" value={data.cycling.count.toString()} />
+        <StatValue
+          label="Distance (km)"
+          value={Math.floor(data.cycling.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="Hours"
+          value={formatTime(data.cycling.moving_time_s)}
+        />
+      </StatCategory>
 
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {data.cycling.count}
-          </div>
-          <div className="text-muted-foreground text-base leading-6 lg:text-lg">
-            Count
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {Math.floor(data.cycling.distance / 1000)}
-          </div>
-          <div className="text-muted-foreground text-base leading-6 lg:text-lg">
-            Distance (km)
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {formatTime(data.cycling.moving_time_s)}
-          </div>
-          <div className="text-muted-foreground text-base leading-6 lg:text-lg">
-            Hours
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-x-12 gap-y-1">
-        <h2 className="col-span-3 text-3xl font-bold text-pretty">Running</h2>
-
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {data.running.count}
-          </div>
-          <div className="text-muted-foreground text-base leading-6">Count</div>
-        </div>
-
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {Math.floor(data.running.distance / 1000)}
-          </div>
-          <div className="text-muted-foreground text-base leading-6">
-            Distance (km)
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className="mb-2 text-4xl font-semibold">
-            {formatTime(data.running.moving_time_s)}
-          </div>
-          <div className="text-muted-foreground text-base leading-6">Hours</div>
-        </div>
-      </div>
+      <StatCategory name={<Turtle size={36} />}>
+        <StatValue label="Count" value={data.running.count.toString()} />
+        <StatValue
+          label="Distance (km)"
+          value={Math.floor(data.running.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="Hours"
+          value={formatTime(data.running.moving_time_s)}
+        />
+      </StatCategory>
     </WidgetPositioner>
   );
 };
 
 export default AnnualStats;
+
+const StatCategory: React.FC<
+  React.PropsWithChildren<{ name: React.ReactElement }>
+> = ({ name, children }) => {
+  return (
+    <div className="mb-14 grid grid-cols-3 gap-x-12 gap-y-0">
+      <div className="text-muted-foreground col-span-3 flex justify-end text-3xl">
+        {name}
+      </div>
+      {children}
+    </div>
+  );
+};
+
+const StatValue: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => {
+  return (
+    <div className="space-y-1">
+      <div className="text-4xl font-semibold">{value}</div>
+      <div className="text-muted-foreground text-base leading-2">{label}</div>
+    </div>
+  );
+};
 
 const formatTime = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);
