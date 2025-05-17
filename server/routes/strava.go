@@ -43,7 +43,7 @@ type StravaAPIResponse struct {
 	} `json:"ytd_run_totals"`
 }
 
-var stravaCache = cache.New(30*time.Minute, 45*time.Hour)
+var stravaCache = cache.New(30*time.Minute, 45*time.Minute)
 
 func StravaStatsHandler(res http.ResponseWriter, req *http.Request) {
 	stravaResponse, err := fetchStravaData()
