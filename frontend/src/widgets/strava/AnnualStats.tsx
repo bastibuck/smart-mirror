@@ -44,26 +44,26 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
-      <StatCategory name={<Bike size={36} />}>
-        <StatValue label="Count" value={data.cycling.count.toString()} />
+      <StatCategory name={<Bike size={50} />}>
+        <StatValue label="#" value={data.cycling.count.toString()} />
         <StatValue
-          label="Distance (km)"
+          label="km"
           value={Math.floor(data.cycling.distance_m / 1000).toString()}
         />
         <StatValue
-          label="Hours"
+          label="hh:mm"
           value={formatTime(data.cycling.moving_time_s)}
         />
       </StatCategory>
 
-      <StatCategory name={<Turtle size={36} />}>
-        <StatValue label="Count" value={data.running.count.toString()} />
+      <StatCategory name={<Turtle size={50} />}>
+        <StatValue label="#" value={data.running.count.toString()} />
         <StatValue
-          label="Distance (km)"
+          label="km"
           value={Math.floor(data.running.distance_m / 1000).toString()}
         />
         <StatValue
-          label="Hours"
+          label="hh:mm"
           value={formatTime(data.running.moving_time_s)}
         />
       </StatCategory>
@@ -77,7 +77,7 @@ const StatCategory: React.FC<
   React.PropsWithChildren<{ name: React.ReactElement }>
 > = ({ name, children }) => {
   return (
-    <div className="mb-14 grid grid-cols-3 gap-x-12 gap-y-0">
+    <div className="mb-9 grid grid-cols-3 gap-x-6">
       <div className="text-muted-foreground col-span-3 flex justify-end text-3xl">
         {name}
       </div>
@@ -92,7 +92,7 @@ const StatValue: React.FC<{ label: string; value: string }> = ({
 }) => {
   return (
     <div className="space-y-1">
-      <div className="text-4xl font-semibold">{value}</div>
+      <div className="text-3xl font-semibold">{value}</div>
       <div className="text-muted-foreground text-base leading-2">{label}</div>
     </div>
   );

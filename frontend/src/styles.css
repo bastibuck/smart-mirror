@@ -93,14 +93,14 @@
   height: 100%;
 
   --cols: 3;
-  --rows: 5;
+  --rows: 3;
 
   --size-large: 2;
   --size-full: var(--cols);
 
   display: grid;
-  grid-template-rows: repeat(var(--rows), 1fr);
-  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: 1fr 150px 1fr;
+  grid-template-columns: 1fr 150px 1fr;
 
   .widget {
     &.widget--top-left {
