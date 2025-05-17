@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { cn } from "@/lib/utils";
+import { env } from "@/env";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +22,11 @@ function RootComponent() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <div className="widget-grid">
+        <div
+          className={cn("widget-grid", {
+            "cursor-none": env.VITE_IS_PROD,
+          })}
+        >
           <Outlet />
         </div>
 
