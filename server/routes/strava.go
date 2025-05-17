@@ -14,7 +14,7 @@ import (
 type SportStats struct {
 	Count       int `json:"count"`
 	MovingTimeS int `json:"moving_time_s"`
-	Distance    int `json:"distance"`
+	DistanceM   int `json:"distance_m"`
 }
 
 type StravaStats struct {
@@ -22,11 +22,11 @@ type StravaStats struct {
 	Cycling SportStats `json:"cycling"`
 }
 
-func NewSportStats(count, movingTimeS, distance int) SportStats {
+func NewSportStats(count, movingTimeS, distanceM int) SportStats {
 	return SportStats{
 		Count:       count,
 		MovingTimeS: movingTimeS,
-		Distance:    distance,
+		DistanceM:   distanceM,
 	}
 }
 

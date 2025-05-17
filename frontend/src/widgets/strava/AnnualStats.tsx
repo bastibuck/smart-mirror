@@ -8,7 +8,7 @@ import { Bike, Turtle } from "lucide-react";
 
 const SportsStatsSchema = z.object({
   count: z.number(),
-  distance: z.number(),
+  distance_m: z.number(),
   moving_time_s: z.number(),
 });
 
@@ -44,11 +44,11 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
-      <StatCategory name={<Bike size={30} />}>
+      <StatCategory name={<Bike size={36} />}>
         <StatValue label="Count" value={data.cycling.count.toString()} />
         <StatValue
           label="Distance (km)"
-          value={Math.floor(data.cycling.distance / 1000).toString()}
+          value={Math.floor(data.cycling.distance_m / 1000).toString()}
         />
         <StatValue
           label="Hours"
@@ -56,11 +56,11 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         />
       </StatCategory>
 
-      <StatCategory name={<Turtle size={30} />}>
+      <StatCategory name={<Turtle size={36} />}>
         <StatValue label="Count" value={data.running.count.toString()} />
         <StatValue
           label="Distance (km)"
-          value={Math.floor(data.running.distance / 1000).toString()}
+          value={Math.floor(data.running.distance_m / 1000).toString()}
         />
         <StatValue
           label="Hours"
@@ -74,13 +74,13 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 export default AnnualStats;
 
 const StatCategory: React.FC<
-  React.PropsWithChildren<{ name: React.ReactNode }>
+  React.PropsWithChildren<{ name: React.ReactElement }>
 > = ({ name, children }) => {
   return (
-    <div className="mb-8 grid grid-cols-3 gap-x-12 gap-y-1">
-      <h2 className="text-muted-foreground col-span-3 flex justify-end text-3xl font-bold text-pretty">
+    <div className="mb-14 grid grid-cols-3 gap-x-12 gap-y-0">
+      <div className="text-muted-foreground col-span-3 flex justify-end text-3xl">
         {name}
-      </h2>
+      </div>
       {children}
     </div>
   );
@@ -91,9 +91,9 @@ const StatValue: React.FC<{ label: string; value: string }> = ({
   value,
 }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <div className="text-4xl font-semibold">{value}</div>
-      <div className="text-muted-foreground text-base leading-6">{label}</div>
+      <div className="text-muted-foreground text-base leading-2">{label}</div>
     </div>
   );
 };
