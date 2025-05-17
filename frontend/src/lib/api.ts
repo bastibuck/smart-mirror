@@ -1,10 +1,11 @@
+import { env } from "@/env";
 import { ZodSchema } from "zod";
 
 export const fetchUtil = async <T>(
-  url: string,
+  url: `/${string}`,
   schema: ZodSchema<T>,
 ): Promise<T> => {
-  const res = await fetch(url, {
+  const res = await fetch(env.VITE_SERVER_URL + url, {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
