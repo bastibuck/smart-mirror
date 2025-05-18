@@ -37,6 +37,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.24"
+          cache-dependency-path: ./server/go.sum
 
       - name: Install Go dependencies
         run: go mod download

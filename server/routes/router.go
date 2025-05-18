@@ -22,6 +22,7 @@ func SetupRouter() *chi.Mux {
 
 	router.Get("/", HomeHandler)
 	router.Get("/strava-stats", StravaStatsHandler)
+	router.Get("/version-hash", VersionHashHandler)
 
 	return router
 }

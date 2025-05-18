@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -12,6 +14,7 @@ const (
 	EnvStravaAccessToken = "STRAVA_ACCESS_TOKEN"
 	EnvStravaAthleteID   = "STRAVA_ATHLETE_ID"
 	EnvCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
+	EnvVersionHash       = "VERSION_HASH"
 
 	// optional env vars
 	EnvServerPort = "SERVER_PORT"
@@ -21,9 +24,17 @@ var RequiredEnvKeys = []string{
 	EnvStravaAccessToken,
 	EnvStravaAthleteID,
 	EnvCorsAllowedOrigin,
+	EnvVersionHash,
 }
 
-func ValidateEnvVars() {
+func SetAndValidateEnvVars() {
+	cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
+	out, err := cmd.Output()
+	if err == nil {
+		hash := strings.TrimSpace(string(out))
+		os.Setenv(EnvVersionHash, hash)
+	}
+
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)

@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	config.ValidateEnvVars()
+	config.SetAndValidateEnvVars()
 
 	serverPort := os.Getenv(config.EnvServerPort)
 
