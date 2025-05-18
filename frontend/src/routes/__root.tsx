@@ -1,9 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
 import { env } from "@/env";
+import AutoReloader from "@/components/AutoReloader";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -12,6 +17,12 @@ const queryClient = new QueryClient({
       refetchInterval: 1000 * 60 * 5, // 5 minutes
     },
   },
+
+  queryCache: new QueryCache({
+    onError: (error) => {
+      console.error("global error in query: ", error);
+    },
+  }),
 });
 
 export const Route = createRootRoute({
@@ -31,6 +42,8 @@ function RootComponent() {
         </div>
 
         <ReactQueryDevtools initialIsOpen={false} />
+
+        <AutoReloader />
       </QueryClientProvider>
 
       <TanStackRouterDevtools position="bottom-left" />

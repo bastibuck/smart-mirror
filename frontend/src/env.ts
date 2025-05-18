@@ -17,6 +17,7 @@ const env = createEnv({
   client: {
     VITE_SERVER_URL: z.string().url(),
     VITE_IS_PROD: z.boolean().default(false),
+    VITE_VERSION_HASH: z.string().optional(), // will not actually be optional as passed in by vite config
   },
 
   /**
@@ -29,6 +30,7 @@ const env = createEnv({
   runtimeEnvStrict: {
     VITE_SERVER_URL: import.meta.env.VITE_SERVER_URL,
     VITE_IS_PROD: import.meta.env.PROD,
+    VITE_VERSION_HASH: import.meta.env.VITE_VERSION_HASH,
   },
 });
 
