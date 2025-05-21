@@ -10,7 +10,7 @@ COPY . .
 RUN go build -o /app/smart-mirror-backend
 
 # Development stage (target: dev)
-FROM golang:1.24-alpine AS dev
+FROM builder AS dev
 
 WORKDIR /app
 
@@ -22,6 +22,9 @@ CMD ["air"]
 
 # Production stage (target: prod)
 FROM alpine:latest AS prod
+
+ARG VERSION_HASH
+ENV VERSION_HASH=$VERSION_HASH
 
 WORKDIR /app
 

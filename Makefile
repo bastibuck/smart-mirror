@@ -9,7 +9,7 @@ start-backend:
 		docker start smart-mirror-backend; \
 	else \
 		echo "Building smart-mirror-backend..."; \
-		docker build -t smart-mirror-backend ./server; \
+		docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-backend ./server; \
 		docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend; \
 	fi
 
@@ -19,7 +19,7 @@ stop-backend:
 rebuild-backend:
 	docker stop smart-mirror-backend
 	docker container rm smart-mirror-backend
-	docker build -t smart-mirror-backend ./server
+	docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-backend ./server
 	docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend
 
 # frontend
@@ -29,7 +29,7 @@ start-frontend:
 		docker start smart-mirror-frontend; \
 	else \
 		echo "Building smart-mirror-frontend..."; \
-		docker build -t smart-mirror-frontend ./frontend; \
+		docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-frontend ./frontend; \
 		docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend; \
 	fi
 
@@ -39,7 +39,7 @@ stop-frontend:
 rebuild-frontend: 
 	docker stop smart-mirror-frontend
 	docker container rm smart-mirror-frontend
-	docker build -t smart-mirror-frontend ./frontend
+	docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-frontend ./frontend
 	docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend
 
 # start all

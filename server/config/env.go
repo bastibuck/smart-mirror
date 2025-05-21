@@ -3,8 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -14,30 +12,32 @@ const (
 	EnvStravaAccessToken = "STRAVA_ACCESS_TOKEN"
 	EnvStravaAthleteID   = "STRAVA_ATHLETE_ID"
 	EnvCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
-	EnvVersionHash       = "VERSION_HASH"
 
 	// optional env vars
-	EnvServerPort = "SERVER_PORT"
+	EnvServerPort  = "SERVER_PORT"
+	EnvVersionHash = "VERSION_HASH"
 )
 
 var RequiredEnvKeys = []string{
 	EnvStravaAccessToken,
 	EnvStravaAthleteID,
 	EnvCorsAllowedOrigin,
+	EnvServerPort,
 	EnvVersionHash,
 }
 
 func SetAndValidateEnvVars() {
-	cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
-	out, err := cmd.Output()
-	if err == nil {
-		hash := strings.TrimSpace(string(out))
-		os.Setenv(EnvVersionHash, hash)
-	}
-
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)
+	}
+
+	if os.Getenv(EnvVersionHash) == "" {
+		os.Setenv(EnvVersionHash, "notset")
+	}
+
+	if os.Getenv(EnvServerPort) == "" {
+		os.Setenv(EnvServerPort, "8080")
 	}
 
 	for _, key := range RequiredEnvKeys {
@@ -45,9 +45,5 @@ func SetAndValidateEnvVars() {
 			fmt.Printf("Error: missing required environment variable: %s\n", key)
 			os.Exit(1)
 		}
-	}
-
-	if os.Getenv(EnvServerPort) == "" {
-		os.Setenv(EnvServerPort, "8080")
 	}
 }
