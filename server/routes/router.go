@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"smartmirror.server/config"
+	routes "smartmirror.server/routes/strava"
 )
 
 func SetupRouter() *chi.Mux {
@@ -21,7 +22,8 @@ func SetupRouter() *chi.Mux {
 	}))
 
 	router.Get("/", HomeHandler)
-	router.Get("/strava-stats", StravaStatsHandler)
+	router.Get("/strava-stats", routes.StravaStatsHandler)
+	router.Get("/strava-stats/exchange-token", routes.StravaExchangeTokenHandler)
 	router.Get("/version-hash", VersionHashHandler)
 
 	return router

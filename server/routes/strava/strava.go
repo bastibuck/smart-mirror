@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/patrickmn/go-cache"
-	"smartmirror.server/config"
 )
+
+var GLOBAL_StravaAthleteId int
+var GLOBAL_StravaAccessToken string
+var GLOBAL_StravaRefreshToken string
 
 type SportStats struct {
 	Count       int `json:"count"`
@@ -47,7 +49,13 @@ var stravaCache = cache.New(30*time.Minute, 45*time.Minute)
 
 func StravaStatsHandler(res http.ResponseWriter, req *http.Request) {
 	stravaResponse, err := fetchStravaData()
+
 	if err != nil {
+		if err.Error() == "401" {
+			http.Error(res, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		http.Error(res, fmt.Sprintf("Failed to fetch data from Strava: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -66,17 +74,20 @@ func fetchStravaData() (StravaStats, error) {
 		return cachedData.(StravaStats), nil
 	}
 
-	athleteID := os.Getenv(config.EnvStravaAthleteID)
-	accessToken := os.Getenv(config.EnvStravaAccessToken)
+	if GLOBAL_StravaAthleteId == 0 || GLOBAL_StravaAccessToken == "" {
+		return StravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+	}
 
-	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%s/stats", athleteID)
+	// TODO? always refresh the access token
+
+	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%d/stats", GLOBAL_StravaAthleteId)
 
 	req, err := http.NewRequest("GET", stravaAPIURL, nil)
 	if err != nil {
 		return StravaStats{}, err
 	}
 
-	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
 
 	// Make the HTTP request
 	client := &http.Client{}
@@ -87,6 +98,10 @@ func fetchStravaData() (StravaStats, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusUnauthorized {
+			return StravaStats{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+		}
+
 		return StravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 

@@ -13,7 +13,9 @@ export const fetchUtil = async <T>(
   });
 
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(res.statusText, {
+      cause: res.status,
+    });
   }
 
   // Parse and return the data as the inferred type

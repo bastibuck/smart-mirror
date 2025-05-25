@@ -1,10 +1,12 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { QRCodeSVG } from "qrcode.react";
 
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import { z } from "zod";
 import { fetchUtil } from "@/lib/api";
 import { Bike, Turtle } from "lucide-react";
+import { env } from "@/env";
 
 const SportsStatsSchema = z.object({
   count: z.number(),
@@ -26,6 +28,21 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
   });
 
   if (isError) {
+    if (error instanceof Error && error.cause === 401) {
+      return (
+        <WidgetPositioner {...widgetPositionerProps}>
+          <div className="space-y-4">
+            <p className="text-xl">Please log in to see your Strava stats.</p>
+            <QRCodeSVG
+              value={`http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava-stats/exchange-token&scope=profile:read_all,activity:read_all`}
+              size={280}
+              className="inline"
+            />
+          </div>
+        </WidgetPositioner>
+      );
+    }
+
     return (
       <WidgetPositioner {...widgetPositionerProps}>
         <p>TODO! Handle error case!</p>

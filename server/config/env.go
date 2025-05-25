@@ -9,8 +9,9 @@ import (
 
 const (
 	// required env vars
-	EnvStravaAccessToken = "STRAVA_ACCESS_TOKEN"
-	EnvStravaAthleteID   = "STRAVA_ATHLETE_ID"
+	EnvStravaClientId     = "STRAVA_CLIENT_ID"
+	EnvStravaClientSecret = "STRAVA_CLIENT_SECRET"
+
 	EnvCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
 
 	// optional env vars
@@ -19,8 +20,8 @@ const (
 )
 
 var RequiredEnvKeys = []string{
-	EnvStravaAccessToken,
-	EnvStravaAthleteID,
+	EnvStravaClientId,
+	EnvStravaClientSecret,
 	EnvCorsAllowedOrigin,
 	EnvServerPort,
 	EnvVersionHash,
