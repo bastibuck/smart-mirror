@@ -5,6 +5,8 @@ export const Route = createFileRoute("/strava/token-success")({
 });
 
 function RouteComponent() {
+  // TODO! trigger invalidate of strava stats query
+
   return (
     <div>
       oAuth successful. You can close this now. Mirror will refetch

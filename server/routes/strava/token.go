@@ -56,5 +56,5 @@ func StravaExchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
 	GLOBAL_StravaAthleteId = response.Athlete.Id
 
 	// redirect user to success
-	http.Redirect(res, req, "http://localhost:3000/strava/token-success", http.StatusTemporaryRedirect)
+	http.Redirect(res, req, os.Getenv(config.EnvFrontendUrl)+"/strava/token-success", http.StatusTemporaryRedirect)
 }

@@ -9,6 +9,8 @@ import (
 
 const (
 	// required env vars
+	EnvFrontendUrl = "FRONTEND_URL"
+
 	EnvStravaClientId     = "STRAVA_CLIENT_ID"
 	EnvStravaClientSecret = "STRAVA_CLIENT_SECRET"
 
@@ -20,6 +22,7 @@ const (
 )
 
 var RequiredEnvKeys = []string{
+	EnvFrontendUrl,
 	EnvStravaClientId,
 	EnvStravaClientSecret,
 	EnvCorsAllowedOrigin,

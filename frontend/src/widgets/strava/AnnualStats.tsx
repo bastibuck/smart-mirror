@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 
 import WidgetPositioner from "../_layout/WidgetPositioner";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { fetchUtil } from "@/lib/api";
 import { Bike, Turtle } from "lucide-react";
 import { env } from "@/env";
@@ -43,19 +43,10 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
       );
     }
 
-    if (error instanceof ZodError) {
-      return (
-        <WidgetPositioner {...widgetPositionerProps}>
-          <p>TODO! Handle validation error!</p>
-          <pre>{JSON.stringify(error, null, 2)}</pre>
-        </WidgetPositioner>
-      );
-    }
-
     return (
       <WidgetPositioner {...widgetPositionerProps}>
         <p>TODO! Handle error case!</p>
-        <pre>{JSON.stringify(error, null, 2)}</pre>
+        <p>{error.message}</p>
       </WidgetPositioner>
     );
   }
