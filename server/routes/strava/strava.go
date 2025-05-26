@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"smartmirror.server/config"
 )
 
 var GLOBAL_StravaAthleteId int
@@ -78,7 +80,11 @@ func fetchStravaData() (StravaStats, error) {
 		return StravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
-	// TODO? always refresh the access token
+	err := refreshStravaAccessToken()
+
+	if err != nil {
+		return StravaStats{}, fmt.Errorf("failed to refresh Strava access token: %v", err)
+	}
 
 	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%d/stats", GLOBAL_StravaAthleteId)
 
@@ -127,4 +133,47 @@ func fetchStravaData() (StravaStats, error) {
 	stravaCache.Set(cacheKey, stats, cache.DefaultExpiration)
 
 	return stats, nil
+}
+
+type StravaRefreshTokenApiResponse struct {
+	// TokenType    string `json:"token_type"`
+	AccessToken string `json:"access_token"`
+	// ExpiresAt    int    `json:"expires_at"`
+	// ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+func refreshStravaAccessToken() error {
+	url := "https://www.strava.com/oauth/token" +
+		"?client_id=" + os.Getenv(config.EnvStravaClientId) +
+		"&client_secret=" + os.Getenv(config.EnvStravaClientSecret) +
+		"&grant_type=refresh_token" +
+		"&refresh_token=" + GLOBAL_StravaRefreshToken
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Strava API returned status: %s", resp.Status)
+	}
+
+	var response StravaRefreshTokenApiResponse
+
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return err
+	}
+
+	GLOBAL_StravaAccessToken = response.AccessToken
+	GLOBAL_StravaRefreshToken = response.RefreshToken
+
+	return nil
 }
