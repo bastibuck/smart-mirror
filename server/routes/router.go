@@ -10,12 +10,10 @@ import (
 )
 
 func SetupRouter() *chi.Mux {
-	corsAllowedOrigin := os.Getenv(config.EnvCorsAllowedOrigin)
-
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{corsAllowedOrigin},
+		AllowedOrigins: []string{os.Getenv(config.EnvCorsAllowedOrigin)},
 		AllowedMethods: []string{"GET", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Content-Type"},
 		MaxAge:         300,
