@@ -22,6 +22,7 @@ const AutoReloader: React.FC = () => {
 
       return result.versionHash;
     },
+    refetchInterval: 1000 * 60 * 1, // 5 minutes
   });
 
   return null;
