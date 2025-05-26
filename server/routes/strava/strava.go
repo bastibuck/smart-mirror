@@ -50,14 +50,21 @@ type StravaAPIResponse struct {
 var stravaCache = cache.New(30*time.Minute, 45*time.Minute)
 
 func StravaStatsHandler(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("StravaStatsHandler called")
+
 	stravaResponse, err := fetchStravaData()
 
 	if err != nil {
 		if err.Error() == "401" {
+			// If the error is 401 Unauthorized, return a 401 status code
+			fmt.Println("Unauthorized access to Strava data")
+
 			http.Error(res, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
+		// Log the error and return a 500 Internal Server Error
+		fmt.Printf("Error fetching Strava data: %v\n", err)
 		http.Error(res, fmt.Sprintf("Failed to fetch data from Strava: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -65,6 +72,8 @@ func StravaStatsHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(res).Encode(stravaResponse); err != nil {
+		// Log the error and return a 500 Internal Server Error
+		fmt.Printf("Error encoding Strava data to JSON: %v\n", err)
 		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }
@@ -72,9 +81,14 @@ func StravaStatsHandler(res http.ResponseWriter, req *http.Request) {
 func fetchStravaData() (StravaStats, error) {
 	const cacheKey = "strava-stats"
 
+	fmt.Println("Fetching Strava data...")
+
 	if cachedData, found := stravaCache.Get(cacheKey); found {
 		return cachedData.(StravaStats), nil
 	}
+
+	// Check if the global Strava athlete ID and access token are set
+	fmt.Println("Checking Strava athlete ID and access token...", GLOBAL_StravaAthleteId, "<-->", GLOBAL_StravaAccessToken)
 
 	if GLOBAL_StravaAthleteId == 0 || GLOBAL_StravaAccessToken == "" {
 		return StravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
@@ -86,6 +100,7 @@ func fetchStravaData() (StravaStats, error) {
 		return StravaStats{}, fmt.Errorf("failed to refresh Strava access token: %v", err)
 	}
 
+	fmt.Println("Strava access token refreshed successfully, fetching data...")
 	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%d/stats", GLOBAL_StravaAthleteId)
 
 	req, err := http.NewRequest("GET", stravaAPIURL, nil)
@@ -104,6 +119,8 @@ func fetchStravaData() (StravaStats, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Strava API returned status: %s\n", resp.Status)
+
 		if resp.StatusCode == http.StatusUnauthorized {
 			return StravaStats{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
 		}
@@ -114,6 +131,7 @@ func fetchStravaData() (StravaStats, error) {
 	var stravaAPIResponse StravaAPIResponse
 
 	if err := json.NewDecoder(resp.Body).Decode(&stravaAPIResponse); err != nil {
+		fmt.Printf("Error decoding Strava API response: %v\n", err)
 		return StravaStats{}, err
 	}
 
@@ -144,6 +162,8 @@ type StravaRefreshTokenApiResponse struct {
 }
 
 func refreshStravaAccessToken() error {
+	fmt.Println("Refreshing Strava access token...")
+
 	url := "https://www.strava.com/oauth/token" +
 		"?client_id=" + os.Getenv(config.EnvStravaClientId) +
 		"&client_secret=" + os.Getenv(config.EnvStravaClientSecret) +
@@ -163,12 +183,14 @@ func refreshStravaAccessToken() error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Strava API returned status: %s\n", resp.Status)
 		return fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 
 	var response StravaRefreshTokenApiResponse
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		fmt.Printf("Error decoding Strava API response: %v\n", err)
 		return err
 	}
 
