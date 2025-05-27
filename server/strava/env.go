@@ -6,12 +6,15 @@ const (
 	envStravaClientId        = "STRAVA_CLIENT_ID"
 	envStravaClientSecret    = "STRAVA_CLIENT_SECRET"
 	envStravaLoginSuccessUrl = "STRAVA_LOGIN_SUCCESS_URL"
+	envStravaLoginFailureUrl = "STRAVA_LOGIN_FAILURE_URL"
 )
 
 func GetEnvKeys() []string {
 	return []string{
 		envStravaClientId,
 		envStravaClientSecret,
+		envStravaLoginSuccessUrl,
+		envStravaLoginFailureUrl,
 	}
 }
 
@@ -29,4 +32,8 @@ func getStravaClientSecret() string {
 
 func GetStravaLoginSuccessUrl() string {
 	return os.Getenv(envStravaLoginSuccessUrl)
+}
+
+func GetStravaLoginFailureUrl() string {
+	return os.Getenv(envStravaLoginFailureUrl)
 }

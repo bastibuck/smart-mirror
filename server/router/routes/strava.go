@@ -38,7 +38,7 @@ func stravaExchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
 	err := strava.ExchangeCodeForToken(req.URL.Query().Get("code"))
 
 	if err != nil {
-		http.Redirect(res, req, "http://TODO", http.StatusTemporaryRedirect)
+		http.Redirect(res, req, strava.GetStravaLoginFailureUrl(), http.StatusTemporaryRedirect)
 		return
 	}
 
