@@ -34,7 +34,7 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
           <div className="space-y-4">
             <p className="text-xl">Please log in to see your Strava stats.</p>
             <QRCodeSVG
-              value={`http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava-stats/exchange-token&scope=profile:read_all,activity:read_all`}
+              value={`http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava/exchange-token&scope=profile:read_all,activity:read_all`}
               size={280}
               className="inline"
             />
