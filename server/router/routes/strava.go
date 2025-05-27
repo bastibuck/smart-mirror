@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -152,10 +151,10 @@ type StravaRefreshTokenApiResponse struct {
 
 func refreshStravaAccessToken() error {
 	url := "https://www.strava.com/oauth/token" +
-		"?client_id=" + os.Getenv(env.EnvStravaClientId) +
-		"&client_secret=" + os.Getenv(env.EnvStravaClientSecret) +
-		"&grant_type=refresh_token" +
-		"&refresh_token=" + GLOBAL_StravaRefreshToken
+		"?client_id=" + env.GetStravaClientId() +
+		"&client_secret=" + env.GetStravaClientSecret() +
+		"&refresh_token=" + GLOBAL_StravaRefreshToken +
+		"&grant_type=refresh_token"
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
@@ -195,8 +194,9 @@ type StravaExchangeTokenAPIResponse struct {
 }
 
 func stravaExchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
-	url := "https://www.strava.com/oauth/token?client_id=" + os.Getenv(env.EnvStravaClientId) +
-		"&client_secret=" + os.Getenv(env.EnvStravaClientSecret) +
+	url := "https://www.strava.com/oauth/token" +
+		"?client_id=" + env.GetStravaClientId() +
+		"&client_secret=" + env.GetStravaClientSecret() +
 		"&code=" + req.URL.Query().Get("code") +
 		"&grant_type=authorization_code"
 
@@ -232,5 +232,5 @@ func stravaExchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
 	GLOBAL_StravaAthleteId = response.Athlete.Id
 
 	// redirect user to success
-	http.Redirect(res, req, os.Getenv(env.EnvFrontendUrl)+"/strava/token-success", http.StatusTemporaryRedirect)
+	http.Redirect(res, req, env.GetFrontendUrl()+"/strava/token-success", http.StatusTemporaryRedirect)
 }

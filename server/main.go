@@ -3,18 +3,17 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"smartmirror.server/env"
 	"smartmirror.server/router"
 )
 
 func main() {
-	env.SetAndValidateEnv()
+	env.SetupEnv()
 
 	router := router.SetupRouter()
 
-	serverPort := os.Getenv(env.EnvServerPort)
+	serverPort := env.GetServerPort()
 	fmt.Printf("Starting the application on port %s\n", serverPort)
 
 	http.ListenAndServe(":"+serverPort, router)

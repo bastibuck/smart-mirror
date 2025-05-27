@@ -9,45 +9,77 @@ import (
 
 const (
 	// required env vars
-	EnvFrontendUrl = "FRONTEND_URL"
+	envFrontendUrl = "FRONTEND_URL"
 
-	EnvStravaClientId     = "STRAVA_CLIENT_ID"
-	EnvStravaClientSecret = "STRAVA_CLIENT_SECRET"
+	envStravaClientId     = "STRAVA_CLIENT_ID"
+	envStravaClientSecret = "STRAVA_CLIENT_SECRET"
 
-	EnvCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
+	envCorsAllowedOrigin = "CORS_ALLOWED_ORIGIN"
 
 	// optional env vars
-	EnvServerPort  = "SERVER_PORT"
-	EnvVersionHash = "VERSION_HASH"
+	envServerPort  = "SERVER_PORT"
+	envVersionHash = "VERSION_HASH"
 )
 
-var RequiredEnvKeys = []string{
-	EnvFrontendUrl,
-	EnvStravaClientId,
-	EnvStravaClientSecret,
-	EnvCorsAllowedOrigin,
-	EnvServerPort,
-	EnvVersionHash,
+var requiredEnvKeys = []string{
+	envFrontendUrl,
+	envStravaClientId,
+	envStravaClientSecret,
+	envCorsAllowedOrigin,
+	envServerPort,
+	envVersionHash,
 }
 
-func SetAndValidateEnv() {
+func SetupEnv() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)
 	}
 
-	if os.Getenv(EnvVersionHash) == "" {
-		os.Setenv(EnvVersionHash, "notset")
+	if os.Getenv(envVersionHash) == "" {
+		os.Setenv(envVersionHash, "notset")
 	}
 
-	if os.Getenv(EnvServerPort) == "" {
-		os.Setenv(EnvServerPort, "8080")
+	if os.Getenv(envServerPort) == "" {
+		os.Setenv(envServerPort, "8080")
 	}
 
-	for _, key := range RequiredEnvKeys {
+	var anyMissingEnv bool
+	for _, key := range requiredEnvKeys {
 		if os.Getenv(key) == "" {
-			fmt.Printf("Error: missing required environment variable: %s\n", key)
-			os.Exit(1)
+			anyMissingEnv = true
+			fmt.Printf("Error: missing environment variable: %s\n", key)
 		}
+
 	}
+
+	if anyMissingEnv {
+		os.Exit(1)
+	}
+}
+
+// getters
+
+func GetVersionHash() string {
+	return os.Getenv(envVersionHash)
+}
+
+func GetFrontendUrl() string {
+	return os.Getenv(envFrontendUrl)
+}
+
+func GetStravaClientId() string {
+	return os.Getenv(envStravaClientId)
+}
+
+func GetStravaClientSecret() string {
+	return os.Getenv(envStravaClientSecret)
+}
+
+func GetServerPort() string {
+	return os.Getenv(envServerPort)
+}
+
+func GetCorsAllowedOrigin() string {
+	return os.Getenv(envCorsAllowedOrigin)
 }
