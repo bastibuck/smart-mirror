@@ -24,7 +24,7 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 }) => {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["strava-annual-stats"],
-    queryFn: () => fetchUtil("/strava-stats", AnnualStatsSchema),
+    queryFn: () => fetchUtil("/strava/stats", AnnualStatsSchema),
   });
 
   if (isError) {

@@ -1,4 +1,4 @@
-package config
+package env
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ var RequiredEnvKeys = []string{
 	EnvVersionHash,
 }
 
-func SetAndValidateEnvVars() {
+func SetAndValidateEnv() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)

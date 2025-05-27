@@ -5,18 +5,17 @@ import (
 	"net/http"
 	"os"
 
-	"smartmirror.server/config"
-	"smartmirror.server/routes"
+	"smartmirror.server/env"
+	"smartmirror.server/router"
 )
 
 func main() {
-	config.SetAndValidateEnvVars()
+	env.SetAndValidateEnv()
 
-	serverPort := os.Getenv(config.EnvServerPort)
+	router := router.SetupRouter()
 
-	fmt.Printf("Starting the application on http://localhost:%s\n", serverPort)
-
-	router := routes.SetupRouter()
+	serverPort := os.Getenv(env.EnvServerPort)
+	fmt.Printf("Starting the application on port %s\n", serverPort)
 
 	http.ListenAndServe(":"+serverPort, router)
 }

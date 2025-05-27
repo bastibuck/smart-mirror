@@ -5,21 +5,24 @@ import (
 	"net/http"
 	"os"
 
-	"smartmirror.server/config"
+	"github.com/go-chi/chi/v5"
+	"smartmirror.server/env"
 )
 
 type VersionHashResponse struct {
 	Hash string `json:"versionHash"`
 }
 
-var VersionHash string
+func RegisterVersionHashRoutes(router *chi.Mux) {
+	router.HandleFunc("/version-hash", versionHashHandler)
+}
 
-func VersionHashHandler(res http.ResponseWriter, req *http.Request) {
+func versionHashHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusOK)
 
 	versionHash := VersionHashResponse{
-		Hash: os.Getenv(config.EnvVersionHash),
+		Hash: os.Getenv(env.EnvVersionHash),
 	}
 
 	if err := json.NewEncoder(res).Encode(versionHash); err != nil {
