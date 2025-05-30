@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -80,83 +81,48 @@ func FetchStravaData() (stravaStats, error) {
 		}
 	}
 
-	// Hikes
-	hikeActivities := 0
-	hikeDistanceM := float32(0)
-	hikeMovingTimeS := float32(0)
+	var RUN_TYPES = []string{"Run", "VirtualRun", "TrailRun"}
+	var CYCLE_TYPES = []string{"Ride", "GravelRide", "VirtualRide", "MountainBikeRide", "EBikeRide", "EMountainBikeRide"}
+	var KITE_TYPES = []string{"Kitesurf"}
+	var HIKE_TYPES = []string{"Hike"}
 
-	// Running
-	runningActivities := 0
-	runningDistanceM := float32(0)
-	runningMovingTimeS := float32(0)
-
-	// Kiting
-	kiteActivities := 0
-	kiteDistanceM := float32(0)
-	kiteMovingTimeS := float32(0)
-
-	// Cycling
-	cyclingActivities := 0
-	cyclingDistanceM := float32(0)
-	cyclingMovingTimeS := float32(0)
+	Running := sportStats{}
+	Hiking := sportStats{}
+	Cycling := sportStats{}
+	Kiting := sportStats{}
 
 	for _, activity := range responseBucket {
-		if activity.SportType == "Run" ||
-			activity.SportType == "VirtualRun" ||
-			activity.SportType == "TrailRun" {
-			runningActivities++
-			runningDistanceM += activity.Distance
-			runningMovingTimeS += activity.MovingTime
+		if slices.Contains(RUN_TYPES, activity.SportType) {
+			Running.Count++
+			Running.DistanceM += int(activity.Distance)
+			Running.MovingTimeS += int(activity.MovingTime)
 		}
 
-		if activity.SportType == "Ride" ||
-			activity.SportType == "GravelRide" ||
-			activity.SportType == "VirtualRide" ||
-			activity.SportType == "MountainBikeRide" ||
-			activity.SportType == "EBikeRide" ||
-			activity.SportType == "EMountainBikeRide" {
-			cyclingActivities++
-			cyclingDistanceM += activity.Distance
-			cyclingMovingTimeS += activity.MovingTime
+		if slices.Contains(CYCLE_TYPES, activity.SportType) {
+			Cycling.Count++
+			Cycling.DistanceM += int(activity.Distance)
+			Cycling.MovingTimeS += int(activity.MovingTime)
 		}
 
-		if activity.SportType == "Hike" {
-			hikeActivities++
-			hikeDistanceM += activity.Distance
-			hikeMovingTimeS += activity.MovingTime
+		if slices.Contains(KITE_TYPES, activity.SportType) {
+			Kiting.Count++
+			Kiting.DistanceM += int(activity.Distance)
+			Kiting.MovingTimeS += int(activity.MovingTime)
 		}
 
-		if activity.SportType == "Kitesurf" {
-			kiteActivities++
-			kiteDistanceM += activity.Distance
-			kiteMovingTimeS += activity.MovingTime
+		if slices.Contains(HIKE_TYPES, activity.SportType) {
+			Hiking.Count++
+			Hiking.DistanceM += int(activity.Distance)
+			Hiking.MovingTimeS += int(activity.MovingTime)
 		}
+
 	}
 
 	stats := stravaStats{
-		Running: sportStats{
-			Count:       runningActivities,
-			DistanceM:   int(runningDistanceM),
-			MovingTimeS: int(runningMovingTimeS),
-		},
-
-		Cycling: sportStats{
-			Count:       cyclingActivities,
-			DistanceM:   int(cyclingDistanceM),
-			MovingTimeS: int(cyclingMovingTimeS),
-		},
-
-		Kiting: sportStats{
-			Count:       kiteActivities,
-			DistanceM:   int(kiteDistanceM),
-			MovingTimeS: int(kiteMovingTimeS),
-		},
-
-		Hiking: sportStats{
-			Count:       hikeActivities,
-			DistanceM:   int(hikeDistanceM),
-			MovingTimeS: int(hikeMovingTimeS),
-		},
+		Running: Running,
+		Hiking:  Hiking,
+		Cycling: Cycling,
+		Kiting:  Kiting,
 	}
 
 	setCachedStravaStats(stats)
