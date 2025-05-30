@@ -3,6 +3,8 @@ package strava
 type stravaStats struct {
 	Running sportStats `json:"running"`
 	Cycling sportStats `json:"cycling"`
+	Hiking  sportStats `json:"hiking"`
+	Kiting  sportStats `json:"kiting"`
 }
 
 type sportStats struct {
