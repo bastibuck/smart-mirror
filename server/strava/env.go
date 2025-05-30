@@ -1,12 +1,20 @@
 package strava
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 const (
 	envStravaClientId        = "STRAVA_CLIENT_ID"
 	envStravaClientSecret    = "STRAVA_CLIENT_SECRET"
 	envStravaLoginSuccessUrl = "STRAVA_LOGIN_SUCCESS_URL"
 	envStravaLoginFailureUrl = "STRAVA_LOGIN_FAILURE_URL"
+
+	// for local dev
+	envStravaAccessTokenOverride  = "STRAVA_ACCESS_TOKEN_OVERRIDE"
+	envStravaRefreshTokenOverride = "STRAVA_REFRESH_TOKEN_OVERRIDE"
+	envStravaAthleteIdOverride    = "STRAVA_ATHLETE_ID_OVERRIDE"
 )
 
 func GetEnvKeys() []string {
@@ -19,7 +27,15 @@ func GetEnvKeys() []string {
 }
 
 func SetDefaultEnv() {
-	// not implemented, as Strava client ID and secret are required
+	// This is used for local development to override the access
+	// so that you don't have to go through the OAuth flow every time.
+	GLOBAL_StravaAccessToken = os.Getenv(envStravaAccessTokenOverride)
+	GLOBAL_StravaRefreshToken = os.Getenv(envStravaRefreshTokenOverride)
+	GLOBAL_StravaAthleteId = func() int {
+		v := os.Getenv(envStravaAthleteIdOverride)
+		i, _ := strconv.Atoi(v)
+		return i
+	}()
 }
 
 func getStravaClientId() string {
