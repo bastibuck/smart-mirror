@@ -45,18 +45,13 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
     return (
       <WidgetPositioner {...widgetPositionerProps}>
-        <p>TODO! Handle error case!</p>
         <p>{error.message}</p>
       </WidgetPositioner>
     );
   }
 
   if (isPending) {
-    return (
-      <WidgetPositioner {...widgetPositionerProps}>
-        <p>TODO! Handle loading!</p>
-      </WidgetPositioner>
-    );
+    return <WidgetPositioner {...widgetPositionerProps} />;
   }
 
   return (
