@@ -58,6 +58,30 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
+      <StatCategory name={<Turtle size={50} />}>
+        <StatValue label="#" value={data.running.count.toString()} />
+        <StatValue
+          label="km"
+          value={Math.floor(data.running.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="hh:mm"
+          value={formatTime(data.running.moving_time_s)}
+        />
+      </StatCategory>
+
+      <StatCategory name={<Bike size={50} />}>
+        <StatValue label="#" value={data.cycling.count.toString()} />
+        <StatValue
+          label="km"
+          value={Math.floor(data.cycling.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="hh:mm"
+          value={formatTime(data.cycling.moving_time_s)}
+        />
+      </StatCategory>
+
       <StatCategory name={<Mountain size={50} />}>
         <StatValue label="#" value={data.hiking.count.toString()} />
         <StatValue
@@ -79,30 +103,6 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         <StatValue
           label="hh:mm"
           value={formatTime(data.kiting.moving_time_s)}
-        />
-      </StatCategory>
-
-      <StatCategory name={<Bike size={50} />}>
-        <StatValue label="#" value={data.cycling.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.cycling.distance_m / 1000).toString()}
-        />
-        <StatValue
-          label="hh:mm"
-          value={formatTime(data.cycling.moving_time_s)}
-        />
-      </StatCategory>
-
-      <StatCategory name={<Turtle size={50} />}>
-        <StatValue label="#" value={data.running.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.running.distance_m / 1000).toString()}
-        />
-        <StatValue
-          label="hh:mm"
-          value={formatTime(data.running.moving_time_s)}
         />
       </StatCategory>
     </WidgetPositioner>
