@@ -5,7 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import { z } from "zod";
 import { ApiError, fetchUtil } from "@/lib/api";
-import { Bike, Turtle } from "lucide-react";
+import { Bike, Turtle, Wind, Mountain } from "lucide-react";
 import { env } from "@/env";
 
 const SportsStatsSchema = z.object({
@@ -17,6 +17,8 @@ const SportsStatsSchema = z.object({
 const AnnualStatsSchema = z.object({
   running: SportsStatsSchema,
   cycling: SportsStatsSchema,
+  hiking: SportsStatsSchema,
+  kiting: SportsStatsSchema,
 });
 
 const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
@@ -56,6 +58,30 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
+      <StatCategory name={<Mountain size={50} />}>
+        <StatValue label="#" value={data.hiking.count.toString()} />
+        <StatValue
+          label="km"
+          value={Math.floor(data.hiking.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="hh:mm"
+          value={formatTime(data.hiking.moving_time_s)}
+        />
+      </StatCategory>
+
+      <StatCategory name={<Wind size={50} />}>
+        <StatValue label="#" value={data.kiting.count.toString()} />
+        <StatValue
+          label="km"
+          value={Math.floor(data.kiting.distance_m / 1000).toString()}
+        />
+        <StatValue
+          label="hh:mm"
+          value={formatTime(data.kiting.moving_time_s)}
+        />
+      </StatCategory>
+
       <StatCategory name={<Bike size={50} />}>
         <StatValue label="#" value={data.cycling.count.toString()} />
         <StatValue
