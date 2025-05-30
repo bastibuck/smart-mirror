@@ -1,5 +1,5 @@
 # Base stage
-FROM node:23-slim AS base
+FROM node:24-slim AS base
 
 ARG VERSION_HASH
 ENV VITE_VERSION_HASH=$VERSION_HASH

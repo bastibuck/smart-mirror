@@ -31,10 +31,10 @@ This repo includes a Makefile that abstracts all commands.
 
 ### Some other helpful commands (for me mostly 😂)
 
-| Task               | Desc                                                                                          | Notes                   |
-| ------------------ | --------------------------------------------------------------------------------------------- | ----------------------- |
-| Run app in browser | `DISPLAY=:0 chromium-browser http://localhost:80 --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
-| Stop browser       | `sudo killall chromium-browser`                                                               |                         |
+| Task               | Desc                                                                                               | Notes                   |
+| ------------------ | -------------------------------------------------------------------------------------------------- | ----------------------- |
+| Run app in browser | `DISPLAY=:0 chromium-browser http://smartmirror.local --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
+| Stop browser       | `sudo killall chromium-browser`                                                                    |                         |
 
 ## Development
 

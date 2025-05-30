@@ -9,12 +9,22 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
 import { env } from "@/env";
 import AutoReloader from "@/components/AutoReloader";
+import { ApiError } from "@/lib/api";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // global refetch interval for all queries, server is in charge of caching data if needed
       refetchInterval: 1000 * 60 * 5, // 5 minutes
+
+      // do not retry on 401s
+      retry(failureCount, error) {
+        if (error instanceof ApiError && error.isUnauthorized) {
+          return false;
+        }
+
+        return failureCount < 3; // Retry up to 3 times
+      },
     },
   },
 
