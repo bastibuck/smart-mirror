@@ -4,7 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import { z } from "zod";
-import { fetchUtil } from "@/lib/api";
+import { ApiError, fetchUtil } from "@/lib/api";
 import { Bike, Turtle } from "lucide-react";
 import { env } from "@/env";
 
@@ -25,17 +25,10 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["strava-annual-stats"],
     queryFn: () => fetchUtil("/strava/stats", AnnualStatsSchema),
-    retry(failureCount, error) {
-      if (error instanceof Error && error.cause === 401) {
-        return false;
-      }
-
-      return failureCount < 3; // Retry up to 3 times
-    },
   });
 
   if (isError) {
-    if (error instanceof Error && error.cause === 401) {
+    if (error instanceof ApiError && error.isUnauthorized) {
       return (
         <WidgetPositioner {...widgetPositionerProps}>
           <div className="space-y-4">

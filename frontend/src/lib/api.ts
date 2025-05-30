@@ -1,10 +1,7 @@
 import { env } from "@/env";
 import { ZodSchema } from "zod";
 
-export const fetchUtil = async <T>(
-  url: `/${string}`,
-  schema: ZodSchema<T>,
-): Promise<T> => {
+export const fetchUtil = async <T>(url: `/${string}`, schema: ZodSchema<T>) => {
   const res = await fetch(env.VITE_SERVER_URL + url, {
     headers: {
       "Content-Type": "application/json",
@@ -13,11 +10,23 @@ export const fetchUtil = async <T>(
   });
 
   if (!res.ok) {
-    throw new Error(res.statusText, {
-      cause: res.status,
-    });
+    throw new ApiError(res.statusText, res.status);
   }
 
   // Parse and return the data as the inferred type
   return schema.parse(await res.json());
 };
+
+export class ApiError extends Error {
+  public isUnauthorized: boolean;
+
+  constructor(
+    message: string,
+    public status: number,
+  ) {
+    super(message);
+
+    this.name = "ApiError";
+    this.isUnauthorized = status === 401;
+  }
+}
