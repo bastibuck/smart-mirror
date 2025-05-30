@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"slices"
 	"time"
 )
 
@@ -81,41 +80,34 @@ func FetchStravaData() (stravaStats, error) {
 		}
 	}
 
-	var RUN_TYPES = []string{"Run", "VirtualRun", "TrailRun"}
-	var CYCLE_TYPES = []string{"Ride", "GravelRide", "VirtualRide", "MountainBikeRide", "EBikeRide", "EMountainBikeRide"}
-	var KITE_TYPES = []string{"Kitesurf"}
-	var HIKE_TYPES = []string{"Hike"}
-
 	Running := sportStats{}
 	Hiking := sportStats{}
 	Cycling := sportStats{}
 	Kiting := sportStats{}
 
+	statsMap := map[string]*sportStats{
+		"Run":        &Running,
+		"VirtualRun": &Running,
+		"TrailRun":   &Running,
+
+		"Ride":              &Cycling,
+		"GravelRide":        &Cycling,
+		"VirtualRide":       &Cycling,
+		"MountainBikeRide":  &Cycling,
+		"EBikeRide":         &Cycling,
+		"EMountainBikeRide": &Cycling,
+
+		"Kitesurf": &Kiting,
+
+		"Hike": &Hiking,
+	}
+
 	for _, activity := range responseBucket {
-		if slices.Contains(RUN_TYPES, activity.SportType) {
-			Running.Count++
-			Running.DistanceM += int(activity.Distance)
-			Running.MovingTimeS += int(activity.MovingTime)
+		if stat, ok := statsMap[activity.SportType]; ok {
+			stat.Count++
+			stat.DistanceM += int(activity.Distance)
+			stat.MovingTimeS += int(activity.MovingTime)
 		}
-
-		if slices.Contains(CYCLE_TYPES, activity.SportType) {
-			Cycling.Count++
-			Cycling.DistanceM += int(activity.Distance)
-			Cycling.MovingTimeS += int(activity.MovingTime)
-		}
-
-		if slices.Contains(KITE_TYPES, activity.SportType) {
-			Kiting.Count++
-			Kiting.DistanceM += int(activity.Distance)
-			Kiting.MovingTimeS += int(activity.MovingTime)
-		}
-
-		if slices.Contains(HIKE_TYPES, activity.SportType) {
-			Hiking.Count++
-			Hiking.DistanceM += int(activity.Distance)
-			Hiking.MovingTimeS += int(activity.MovingTime)
-		}
-
 	}
 
 	stats := stravaStats{
