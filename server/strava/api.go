@@ -7,22 +7,15 @@ import (
 	"time"
 )
 
-var GLOBAL_StravaAthleteId int
 var GLOBAL_ExpiresAt int
 var GLOBAL_StravaAccessToken string
 var GLOBAL_StravaRefreshToken string
 
 type stravaAPIResponse struct {
-	YtdRideTotals struct {
-		Count      int     `json:"count"`
-		Distance   int     `json:"distance"`
-		MovingTime float32 `json:"moving_time"`
-	} `json:"ytd_ride_totals"`
-	YtdRunTotals struct {
-		Count      int     `json:"count"`
-		Distance   int     `json:"distance"`
-		MovingTime float32 `json:"moving_time"`
-	} `json:"ytd_run_totals"`
+	Name       string  `json:"name"`
+	SportType  string  `json:"sport_type"`
+	Distance   float32 `json:"distance"`    // in meters
+	MovingTime float32 `json:"moving_time"` // in seconds
 }
 
 func FetchStravaData() (stravaStats, error) {
@@ -31,7 +24,7 @@ func FetchStravaData() (stravaStats, error) {
 	}
 
 	// Check if the global Strava athlete ID and access token are set
-	if GLOBAL_StravaAthleteId == 0 || GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" {
+	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" {
 		return stravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
@@ -41,47 +34,128 @@ func FetchStravaData() (stravaStats, error) {
 		return stravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
-	stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athletes/%d/stats", GLOBAL_StravaAthleteId)
+	var BEGINNING_OF_YEAR int64 = time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC).Unix()
 
-	req, err := http.NewRequest("GET", stravaAPIURL, nil)
-	if err != nil {
-		return stravaStats{}, err
-	}
+	var responseBucket []stravaAPIResponse
+	page := 0
+	maxRequests := 20 // maximum number of requests to Strava API
+	for {
+		page++
 
-	req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
+		stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athlete/activities?after=%d&page=%d&per_page=200", BEGINNING_OF_YEAR, page)
 
-	// Make the HTTP request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return stravaStats{}, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusUnauthorized {
-			return stravaStats{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+		req, err := http.NewRequest("GET", stravaAPIURL, nil)
+		if err != nil {
+			return stravaStats{}, err
 		}
 
-		return stravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+		req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
+
+		// Make the HTTP request
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return stravaStats{}, err
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			if resp.StatusCode == http.StatusUnauthorized {
+				return stravaStats{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+			}
+
+			return stravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+		}
+
+		var response []stravaAPIResponse
+
+		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+			return stravaStats{}, err
+		}
+
+		responseBucket = append(responseBucket, response...)
+
+		if len(response) == 0 || page >= maxRequests {
+			break
+		}
 	}
 
-	var stravaAPIResponse stravaAPIResponse
+	// Hikes
+	hikeActivities := 0
+	hikeDistanceM := float32(0)
+	hikeMovingTimeS := float32(0)
 
-	if err := json.NewDecoder(resp.Body).Decode(&stravaAPIResponse); err != nil {
-		return stravaStats{}, err
+	// Running
+	runningActivities := 0
+	runningDistanceM := float32(0)
+	runningMovingTimeS := float32(0)
+
+	// Kiting
+	kiteActivities := 0
+	kiteDistanceM := float32(0)
+	kiteMovingTimeS := float32(0)
+
+	// Cycling
+	cyclingActivities := 0
+	cyclingDistanceM := float32(0)
+	cyclingMovingTimeS := float32(0)
+
+	for _, activity := range responseBucket {
+		if activity.SportType == "Run" ||
+			activity.SportType == "VirtualRun" ||
+			activity.SportType == "TrailRun" {
+			runningActivities++
+			runningDistanceM += activity.Distance
+			runningMovingTimeS += activity.MovingTime
+		}
+
+		if activity.SportType == "Ride" ||
+			activity.SportType == "GravelRide" ||
+			activity.SportType == "VirtualRide" ||
+			activity.SportType == "MountainBikeRide" ||
+			activity.SportType == "EBikeRide" ||
+			activity.SportType == "EMountainBikeRide" {
+			cyclingActivities++
+			cyclingDistanceM += activity.Distance
+			cyclingMovingTimeS += activity.MovingTime
+		}
+
+		if activity.SportType == "Hike" {
+			hikeActivities++
+			hikeDistanceM += activity.Distance
+			hikeMovingTimeS += activity.MovingTime
+		}
+
+		if activity.SportType == "Kitesurf" {
+			kiteActivities++
+			kiteDistanceM += activity.Distance
+			kiteMovingTimeS += activity.MovingTime
+		}
 	}
 
 	stats := stravaStats{
-		Cycling: sportStats{
-			Count:       stravaAPIResponse.YtdRideTotals.Count,
-			MovingTimeS: int(stravaAPIResponse.YtdRideTotals.MovingTime),
-			DistanceM:   stravaAPIResponse.YtdRideTotals.Distance,
-		},
 		Running: sportStats{
-			Count:       stravaAPIResponse.YtdRunTotals.Count,
-			MovingTimeS: int(stravaAPIResponse.YtdRunTotals.MovingTime),
-			DistanceM:   stravaAPIResponse.YtdRunTotals.Distance,
+			Count:       runningActivities,
+			DistanceM:   int(runningDistanceM),
+			MovingTimeS: int(runningMovingTimeS),
+		},
+
+		Cycling: sportStats{
+			Count:       cyclingActivities,
+			DistanceM:   int(cyclingDistanceM),
+			MovingTimeS: int(cyclingMovingTimeS),
+		},
+
+		Kiting: sportStats{
+			Count:       kiteActivities,
+			DistanceM:   int(kiteDistanceM),
+			MovingTimeS: int(kiteMovingTimeS),
+		},
+
+		Hiking: sportStats{
+			Count:       hikeActivities,
+			DistanceM:   int(hikeDistanceM),
+			MovingTimeS: int(hikeMovingTimeS),
 		},
 	}
 
@@ -180,7 +254,6 @@ func ExchangeCodeForToken(code string) error {
 
 	GLOBAL_StravaAccessToken = response.AccessToken
 	GLOBAL_StravaRefreshToken = response.RefreshToken
-	GLOBAL_StravaAthleteId = response.Athlete.Id
 	GLOBAL_ExpiresAt = response.ExpiresAt
 
 	return nil
