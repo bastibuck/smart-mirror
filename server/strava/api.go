@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"smartmirror.server/shared"
 )
 
 var GLOBAL_ExpiresAt int
@@ -215,4 +217,20 @@ func ExchangeCodeForToken(code string) error {
 	GLOBAL_ExpiresAt = response.ExpiresAt
 
 	return nil
+}
+
+func GetStravaCredentials() (credentials, error) {
+	if shared.GetAppMode() != "development" {
+		return credentials{}, fmt.Errorf("Strava credentials are only available in development mode")
+	}
+
+	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" || GLOBAL_ExpiresAt == 0 {
+		return credentials{}, fmt.Errorf("Strava credentials are not set")
+	}
+
+	return credentials{
+		AccessToken:  GLOBAL_StravaAccessToken,
+		RefreshToken: GLOBAL_StravaRefreshToken,
+		ExpiresAt:    GLOBAL_ExpiresAt,
+	}, nil
 }

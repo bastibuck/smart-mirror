@@ -8,6 +8,8 @@ import { ApiError, fetchUtil } from "@/lib/api";
 import { Bike, Turtle, Wind, Mountain } from "lucide-react";
 import { env } from "@/env";
 
+const STRAVA_LOGIN_URL = `http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava/exchange-token&scope=profile:read_all,activity:read_all`;
+
 const SportsStatsSchema = z.object({
   count: z.number(),
   distance_m: z.number(),
@@ -35,11 +37,22 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         <WidgetPositioner {...widgetPositionerProps}>
           <div className="space-y-4">
             <p className="text-xl">Please log in to see your Strava stats.</p>
-            <QRCodeSVG
-              value={`http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava/exchange-token&scope=profile:read_all,activity:read_all`}
-              size={280}
-              className="inline"
-            />
+
+            {env.VITE_IS_PROD ? (
+              <a
+                href={STRAVA_LOGIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Login
+              </a>
+            ) : (
+              <QRCodeSVG
+                value={STRAVA_LOGIN_URL}
+                size={280}
+                className="inline"
+              />
+            )}
           </div>
         </WidgetPositioner>
       );
