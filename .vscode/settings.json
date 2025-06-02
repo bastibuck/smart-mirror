@@ -9,11 +9,7 @@
     "*": true,
     "plaintext": false,
     "markdown": false,
-    "scminput": false,
-    "csharp": false,
-    "shellscript": false,
     "todo": false,
-    "go": true,
     "properties": false
   },
 

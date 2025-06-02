@@ -38,11 +38,12 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
           <div className="space-y-4">
             <p className="text-xl">Please log in to see your Strava stats.</p>
 
-            {env.VITE_IS_PROD ? (
+            {env.VITE_IS_PROD === false ? (
               <a
                 href={STRAVA_LOGIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="mb-32 block"
               >
                 Login
               </a>

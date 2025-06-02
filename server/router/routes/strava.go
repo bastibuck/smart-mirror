@@ -10,13 +10,13 @@ import (
 )
 
 func RegisterStravaRoutes(router *chi.Mux) {
-	router.Get("/strava/stats", stravaStatsHandler)
-	router.Get("/strava/exchange-token", stravaExchangeTokenHandler)
+	router.Get("/strava/stats", statsHandler)
+	router.Get("/strava/exchange-token", exchangeTokenHandler)
 	router.Get("/strava/creds", credentialsHandler)
 }
 
-func stravaStatsHandler(res http.ResponseWriter, req *http.Request) {
-	stravaResponse, err := strava.FetchStravaData()
+func statsHandler(res http.ResponseWriter, req *http.Request) {
+	stats, err := strava.FetchStravaData()
 
 	if err != nil {
 		if err.Error() == "401" {
@@ -30,12 +30,12 @@ func stravaStatsHandler(res http.ResponseWriter, req *http.Request) {
 
 	res.Header().Set("Content-Type", "application/json")
 
-	if err := json.NewEncoder(res).Encode(stravaResponse); err != nil {
+	if err := json.NewEncoder(res).Encode(stats); err != nil {
 		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }
 
-func stravaExchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
+func exchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
 	err := strava.ExchangeCodeForToken(req.URL.Query().Get("code"))
 
 	if err != nil {
