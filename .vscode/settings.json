@@ -1,19 +1,32 @@
 {
   "eslint.useFlatConfig": true,
-  "go.formatTool": "goimports",
   "editor.formatOnSave": true,
+  "cSpell.words": [
+    "smartmirror",
+    "strava"
+  ],
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "csharp": false,
+    "shellscript": false,
+    "todo": false,
+    "go": true,
+    "properties": false
+  },
 
   // go-specific settings
+  "go.formatTool": "goimports",
   "[go]": {
-    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "always"
     }
   },
   "[go.mod]": {
-    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "always"
     }
-  }
+  },
 }
