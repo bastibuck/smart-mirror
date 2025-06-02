@@ -6,10 +6,10 @@ const Clock: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 }) => {
   const [now, setNow] = useState(new Date());
 
-  const timeString = new Intl.DateTimeFormat(undefined, {
+  const timeString = new Intl.DateTimeFormat("de-DE", {
     timeStyle: "short",
   }).format(now);
-  const dateString = new Intl.DateTimeFormat(undefined, {
+  const dateString = new Intl.DateTimeFormat("de-DE", {
     dateStyle: "short",
   }).format(now);
   const [hours, minutes] = timeString.split(":");
