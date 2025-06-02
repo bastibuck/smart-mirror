@@ -3,8 +3,8 @@ package router
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"smartmirror.server/env"
 	"smartmirror.server/router/routes"
+	"smartmirror.server/shared"
 )
 
 func SetupRouter() *chi.Mux {
@@ -12,7 +12,7 @@ func SetupRouter() *chi.Mux {
 
 	// Middleware
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{env.GetCorsAllowedOrigin()},
+		AllowedOrigins: []string{shared.GetCorsAllowedOrigin()},
 		AllowedMethods: []string{"GET", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Content-Type"},
 		MaxAge:         300,

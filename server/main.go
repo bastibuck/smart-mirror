@@ -6,6 +6,7 @@ import (
 
 	"smartmirror.server/env"
 	"smartmirror.server/router"
+	"smartmirror.server/shared"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 
 	router := router.SetupRouter()
 
-	serverPort := env.GetServerPort()
+	serverPort := shared.GetServerPort()
 	fmt.Printf("Starting the application on port %s\n", serverPort)
 
 	http.ListenAndServe(":"+serverPort, router)

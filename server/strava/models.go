@@ -12,3 +12,9 @@ type sportStats struct {
 	MovingTimeS int `json:"moving_time_s"`
 	DistanceM   int `json:"distance_m"`
 }
+
+type credentials struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresAt    int    `json:"expires_at"`
+}
