@@ -1,4 +1,4 @@
-package routes
+package strava
 
 import (
 	"encoding/json"
@@ -6,17 +6,18 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"smartmirror.server/strava"
 )
 
 func RegisterStravaRoutes(router *chi.Mux) {
-	router.Get("/strava/stats", statsHandler)
-	router.Get("/strava/exchange-token", exchangeTokenHandler)
-	router.Get("/strava/creds", credentialsHandler)
+	router.Route("/strava", func(subRouter chi.Router) {
+		subRouter.Get("/stats", statsHandler)
+		subRouter.Get("/exchange-token", exchangeTokenHandler)
+		subRouter.Get("/creds", credentialsHandler)
+	})
 }
 
 func statsHandler(res http.ResponseWriter, req *http.Request) {
-	stats, err := strava.FetchStravaData()
+	stats, err := fetchStravaData()
 
 	if err != nil {
 		if err.Error() == "401" {
@@ -36,18 +37,18 @@ func statsHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 func exchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
-	err := strava.ExchangeCodeForToken(req.URL.Query().Get("code"))
+	err := exchangeCodeForToken(req.URL.Query().Get("code"))
 
 	if err != nil {
-		http.Redirect(res, req, strava.GetStravaLoginFailureUrl(), http.StatusTemporaryRedirect)
+		http.Redirect(res, req, GetStravaLoginFailureUrl(), http.StatusTemporaryRedirect)
 		return
 	}
 
-	http.Redirect(res, req, strava.GetStravaLoginSuccessUrl(), http.StatusTemporaryRedirect)
+	http.Redirect(res, req, GetStravaLoginSuccessUrl(), http.StatusTemporaryRedirect)
 }
 
 func credentialsHandler(res http.ResponseWriter, req *http.Request) {
-	creds, err := strava.GetStravaCredentials()
+	creds, err := getStravaCredentials()
 
 	if err != nil {
 		http.Error(res, fmt.Sprintf("Failed to get Strava credentials: %v", err), http.StatusForbidden)

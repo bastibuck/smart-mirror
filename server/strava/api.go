@@ -20,7 +20,7 @@ type stravaAPIResponse struct {
 	MovingTime float32 `json:"moving_time"` // in seconds
 }
 
-func FetchStravaData() (stravaStats, error) {
+func fetchStravaData() (stravaStats, error) {
 	if cachedData, found := getCachedStravaStats(); found {
 		return cachedData, nil
 	}
@@ -182,7 +182,7 @@ type stravaExchangeTokenAPIResponse struct {
 	}
 }
 
-func ExchangeCodeForToken(code string) error {
+func exchangeCodeForToken(code string) error {
 	url := "https://www.strava.com/oauth/token" +
 		"?client_id=" + getStravaClientId() +
 		"&client_secret=" + getStravaClientSecret() +
@@ -219,7 +219,7 @@ func ExchangeCodeForToken(code string) error {
 	return nil
 }
 
-func GetStravaCredentials() (credentials, error) {
+func getStravaCredentials() (credentials, error) {
 	if shared.GetAppMode() != "development" {
 		return credentials{}, fmt.Errorf("Strava credentials are only available in development mode")
 	}

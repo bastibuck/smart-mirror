@@ -1,11 +1,10 @@
-package routes
+package version
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"smartmirror.server/version"
 )
 
 func RegisterVersionHashRoutes(router *chi.Mux) {
@@ -20,7 +19,7 @@ func versionHashHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
 	versionHash := versionHashHandlerResponse{
-		Hash: version.GetVersion(),
+		Hash: getVersion(),
 	}
 
 	if err := json.NewEncoder(res).Encode(versionHash); err != nil {

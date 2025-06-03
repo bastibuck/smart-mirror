@@ -1,5 +1,5 @@
 package version
 
-func GetVersion() string {
+func getVersion() string {
 	return getVersionHash()
 }
