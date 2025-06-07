@@ -7,16 +7,10 @@ import (
 	"smartmirror.server/env"
 	"smartmirror.server/router"
 	"smartmirror.server/shared"
-	// "github.com/twpayne/go-polyline"
 )
 
 func main() {
 	env.SetupEnv()
-
-	// polylineString := "_p~iF~ps|U_ulLnnqC_mqNvxq`@"
-	// buf := []byte(polylineString)
-	// coords, _, _ := polyline.DecodeCoords(buf)
-	// fmt.Println(coords)
 
 	router := router.SetupRouter()
 
