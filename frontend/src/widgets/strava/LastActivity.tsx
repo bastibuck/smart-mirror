@@ -2,16 +2,13 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiError, fetchUtil } from "@/lib/api";
 import { z } from "zod";
-import { env } from "@/env";
-import { QRCodeSVG } from "qrcode.react";
 import MapLibre, { Layer, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import TypeIcon from "./components/TypeIcon";
 import { formatDuration } from "./utils/date";
 import { StatValue } from "./components/Stats";
-
-const STRAVA_LOGIN_URL = `http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava/exchange-token&scope=profile:read_all,activity:read_all`;
+import Login from "./components/Login";
 
 const LastActivitySchema = z
   .object({
@@ -37,26 +34,7 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
     if (error instanceof ApiError && error.isUnauthorized) {
       return (
         <WidgetPositioner {...widgetPositionerProps}>
-          <div className="space-y-4">
-            <p className="text-xl">Please log in to see your Strava stats.</p>
-
-            {env.VITE_IS_PROD === false ? (
-              <a
-                href={STRAVA_LOGIN_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-32 block"
-              >
-                Login
-              </a>
-            ) : (
-              <QRCodeSVG
-                value={STRAVA_LOGIN_URL}
-                size={280}
-                className="inline"
-              />
-            )}
-          </div>
+          <Login />
         </WidgetPositioner>
       );
     }
