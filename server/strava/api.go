@@ -14,7 +14,7 @@ var GLOBAL_ExpiresAt int
 var GLOBAL_StravaAccessToken string
 var GLOBAL_StravaRefreshToken string
 
-type stravaAPIResponse struct {
+type athleteActivityResponseModel struct {
 	Name       string  `json:"name"`
 	SportType  string  `json:"sport_type"`
 	Distance   float32 `json:"distance"`    // in meters
@@ -22,6 +22,7 @@ type stravaAPIResponse struct {
 	Map        struct {
 		SummaryPolyline string `json:"summary_polyline"`
 	} `json:"map"`
+	StartDate string `json:"start_date_local"`
 }
 
 func fetchStravaData() (stravaStats, error) {
@@ -42,7 +43,7 @@ func fetchStravaData() (stravaStats, error) {
 
 	var BEGINNING_OF_YEAR int64 = time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC).Unix()
 
-	var responseBucket []stravaAPIResponse
+	var responseBucket []athleteActivityResponseModel
 	page := 0
 	maxRequests := 20 // maximum number of requests to Strava API
 	for {
@@ -73,7 +74,7 @@ func fetchStravaData() (stravaStats, error) {
 			return stravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
 		}
 
-		var response []stravaAPIResponse
+		var response []athleteActivityResponseModel
 
 		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 			return stravaStats{}, err
@@ -167,7 +168,7 @@ func fetchLastActivity() (lastActivity, error) {
 		return lastActivity{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 
-	var response []stravaAPIResponse
+	var response []athleteActivityResponseModel
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return lastActivity{}, err
@@ -209,6 +210,8 @@ func fetchLastActivity() (lastActivity, error) {
 	}
 
 	lastActivityData := lastActivity{
+		Name:        activity.Name,
+		Date:        activity.StartDate,
 		Coordinates: normalizedCoords,
 		Type:        typeMap[activity.SportType],
 		DistanceM:   int(activity.Distance),

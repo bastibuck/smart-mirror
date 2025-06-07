@@ -22,6 +22,8 @@ type credentials struct {
 
 // last activity
 type lastActivity struct {
+	Name        string      `json:"name"`
+	Date        string      `json:"date"`
 	Type        string      `json:"type"`
 	DistanceM   int         `json:"distance_m"`
 	MovingTimeS int         `json:"moving_time_s"`
