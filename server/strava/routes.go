@@ -4,19 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
-
-func RegisterStravaRoutes(router *chi.Mux) {
-	router.Route("/strava", func(subRouter chi.Router) {
-		subRouter.Get("/exchange-token", exchangeTokenHandler)
-		subRouter.Get("/creds", credentialsHandler)
-
-		subRouter.Get("/annual", statsHandler)
-		subRouter.Get("/last-activity", lastActivityHandler)
-	})
-}
 
 func statsHandler(res http.ResponseWriter, req *http.Request) {
 	stats, err := fetchStravaData()
@@ -62,11 +50,11 @@ func exchangeTokenHandler(res http.ResponseWriter, req *http.Request) {
 	err := exchangeCodeForToken(req.URL.Query().Get("code"))
 
 	if err != nil {
-		http.Redirect(res, req, GetStravaLoginFailureUrl(), http.StatusTemporaryRedirect)
+		http.Redirect(res, req, getStravaLoginFailureUrl(), http.StatusTemporaryRedirect)
 		return
 	}
 
-	http.Redirect(res, req, GetStravaLoginSuccessUrl(), http.StatusTemporaryRedirect)
+	http.Redirect(res, req, getStravaLoginSuccessUrl(), http.StatusTemporaryRedirect)
 }
 
 func credentialsHandler(res http.ResponseWriter, req *http.Request) {

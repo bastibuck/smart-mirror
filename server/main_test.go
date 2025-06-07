@@ -9,7 +9,7 @@ import (
 )
 
 func TestRootEndpoint(t *testing.T) {
-	router := router.SetupRouter()
+	router := router.SetupRouter([]string{"*"})
 
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {

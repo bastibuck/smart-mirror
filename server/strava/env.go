@@ -15,7 +15,7 @@ const (
 	envStravaRefreshTokenOverride = "STRAVA_REFRESH_TOKEN_OVERRIDE"
 )
 
-func GetEnvKeys() []string {
+func getEnvKeys() []string {
 	return []string{
 		envStravaClientId,
 		envStravaClientSecret,
@@ -24,7 +24,7 @@ func GetEnvKeys() []string {
 	}
 }
 
-func SetDefaultEnv() {
+func setDefaultEnv() {
 	// This is used for local development to override the access
 	// so that you don't have to go through the OAuth flow every time.
 	GLOBAL_StravaAccessToken = os.Getenv(envStravaAccessTokenOverride)
@@ -39,10 +39,10 @@ func getStravaClientSecret() string {
 	return os.Getenv(envStravaClientSecret)
 }
 
-func GetStravaLoginSuccessUrl() string {
+func getStravaLoginSuccessUrl() string {
 	return os.Getenv(envStravaLoginSuccessUrl)
 }
 
-func GetStravaLoginFailureUrl() string {
+func getStravaLoginFailureUrl() string {
 	return os.Getenv(envStravaLoginFailureUrl)
 }

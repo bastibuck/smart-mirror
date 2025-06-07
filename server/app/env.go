@@ -1,8 +1,11 @@
-package shared
+package app
 
 import (
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
+	"smartmirror.server/env"
 )
 
 const (
@@ -11,7 +14,7 @@ const (
 	envAppMode           = "APP_MODE" // "development" or "production"
 )
 
-func GetEnvKeys() []string {
+func getEnvKeys() []string {
 	return []string{
 		envCorsAllowedOrigin,
 		envServerPort,
@@ -24,10 +27,8 @@ var allowedModeValuesMap = map[string]bool{
 	"production":  true,
 }
 
-func SetDefaultEnv() {
-	if os.Getenv(envServerPort) == "" {
-		os.Setenv(envServerPort, "8080")
-	}
+func setDefaultEnv() {
+	env.SetDefaultValue(envServerPort, "8080")
 
 	if os.Getenv(envAppMode) == "" || !allowedModeValuesMap[os.Getenv(envAppMode)] {
 		fmt.Println("Warning: APP_MODE not set or invalid, defaulting to 'production'")
@@ -36,14 +37,26 @@ func SetDefaultEnv() {
 	}
 }
 
-func GetServerPort() string {
+func getServerPort() string {
 	return os.Getenv(envServerPort)
 }
 
-func GetCorsAllowedOrigin() string {
+func getCorsAllowedOrigin() string {
 	return os.Getenv(envCorsAllowedOrigin)
 }
 
 func GetAppMode() string {
 	return os.Getenv(envAppMode)
+}
+
+func setupAppEnv() {
+	// Load environment variables from .env file
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Error loading .env file")
+		os.Exit(1)
+	}
+
+	setDefaultEnv()
+
+	env.ValidateEnvKeys(getEnvKeys())
 }

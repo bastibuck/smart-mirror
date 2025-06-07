@@ -3,34 +3,12 @@ package env
 import (
 	"fmt"
 	"os"
-
-	"github.com/joho/godotenv"
-	"smartmirror.server/shared"
-	"smartmirror.server/strava"
-	"smartmirror.server/version"
 )
 
-func SetupEnv() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-		os.Exit(1)
-	}
-
-	// set default environment variables
-	shared.SetDefaultEnv()
-	version.SetDefaultEnv()
-	strava.SetDefaultEnv()
-
-	// validate required environment variables
+func ValidateEnvKeys(envKeys []string) {
 	var anyMissingEnv bool
 
-	var allEnvKeys []string = []string{}
-
-	allEnvKeys = append(allEnvKeys, shared.GetEnvKeys()...)
-	allEnvKeys = append(allEnvKeys, strava.GetEnvKeys()...)
-	allEnvKeys = append(allEnvKeys, version.GetEnvKeys()...)
-
-	for _, key := range allEnvKeys {
+	for _, key := range envKeys {
 		if os.Getenv(key) == "" {
 			anyMissingEnv = true
 			fmt.Printf("Error: missing environment variable: %s\n", key)
@@ -39,5 +17,11 @@ func SetupEnv() {
 
 	if anyMissingEnv {
 		os.Exit(1)
+	}
+}
+
+func SetDefaultValue(key, value string) {
+	if os.Getenv(key) == "" {
+		os.Setenv(key, value)
 	}
 }
