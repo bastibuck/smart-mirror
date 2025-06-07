@@ -93,7 +93,7 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
             <Layer
               type="line"
               paint={{
-                "line-color": "#333",
+                "line-color": "#555",
                 "line-width": 3,
               }}
             />
