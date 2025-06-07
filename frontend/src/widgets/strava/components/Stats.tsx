@@ -4,7 +4,7 @@ const StatCategory: React.FC<
   React.PropsWithChildren<{ name: React.ReactElement }>
 > = ({ name, children }) => {
   return (
-    <div className="mb-9 grid grid-cols-3 gap-x-6">
+    <div className="mb-6 grid grid-cols-3 gap-x-6">
       <div className="text-muted-foreground col-span-3 flex justify-end text-3xl">
         {name}
       </div>

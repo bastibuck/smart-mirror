@@ -102,7 +102,7 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
           </Source>
         </MapLibre>
 
-        <div className="absolute inset-0 grid place-items-center">
+        <div className="absolute inset-0 grid place-items-center text-shadow-black text-shadow-lg">
           <div className="space-y-2">
             <div className="flex justify-between gap-2">
               <StatValue
