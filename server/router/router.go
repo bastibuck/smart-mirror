@@ -8,13 +8,15 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func SetupRouter(allowedOrigins []string) *chi.Mux {
+func SetupRouter() *chi.Mux {
+	setupEnv()
+
 	router := chi.NewRouter()
 
 	// Middlewares
 	router.Use(middleware.Logger)
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: allowedOrigins,
+		AllowedOrigins: []string{getCorsAllowedOrigin()},
 		AllowedMethods: []string{"GET", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Content-Type"},
 		MaxAge:         300,

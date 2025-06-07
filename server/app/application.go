@@ -7,14 +7,17 @@ import (
 	"smartmirror.server/router"
 	"smartmirror.server/strava"
 	"smartmirror.server/version"
+	"smartmirror.server/widgets"
+	"smartmirror.server/widgets/shared"
 )
 
 func SetupApp() {
 	setupAppEnv()
 
-	router := router.SetupRouter([]string{getCorsAllowedOrigin()})
+	router := router.SetupRouter()
 
-	RegisterWidgets([]Widget{
+	widgets.RegisterWidgets([]widgets.Widget{
+		shared.NewSharedWidget(),
 		version.NewVersionWidget(),
 		strava.NewStravaWidget(),
 	}, router)

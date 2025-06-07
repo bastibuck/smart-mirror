@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/twpayne/go-polyline"
+	"smartmirror.server/widgets/shared"
 )
 
 var GLOBAL_ExpiresAt int
@@ -318,6 +319,10 @@ func exchangeCodeForToken(code string) error {
 }
 
 func getStravaCredentials() (credentialsModel, error) {
+	if shared.GetAppMode() != "development" {
+		return credentialsModel{}, fmt.Errorf("Strava credentials are only available in development mode")
+	}
+
 	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" || GLOBAL_ExpiresAt == 0 {
 		return credentialsModel{}, fmt.Errorf("Strava credentials are not set")
 	}
