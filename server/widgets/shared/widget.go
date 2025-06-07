@@ -8,7 +8,9 @@ func (v *SharedWidget) SetupEnv() {
 	setDefaultEnv()
 }
 
-func (v *SharedWidget) SetupRouter(router *chi.Mux) {}
+func (v *SharedWidget) SetupRouter(router *chi.Mux) {
+	// no routes to setup
+}
 
 func NewSharedWidget() *SharedWidget {
 	return &SharedWidget{}

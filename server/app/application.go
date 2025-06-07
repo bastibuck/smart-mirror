@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"smartmirror.server/router"
-	"smartmirror.server/strava"
-	"smartmirror.server/version"
+
 	"smartmirror.server/widgets"
 	"smartmirror.server/widgets/shared"
+	"smartmirror.server/widgets/strava"
+	"smartmirror.server/widgets/version"
 )
 
 func SetupApp() {

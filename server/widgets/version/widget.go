@@ -9,9 +9,6 @@ type VersionWidget struct{}
 
 func (v *VersionWidget) SetupEnv() {
 	env.SetDefaultValue(envVersionHash, "notset")
-	env.ValidateEnvKeys([]string{
-		envVersionHash,
-	})
 }
 
 func (v *VersionWidget) SetupRouter(router *chi.Mux) {

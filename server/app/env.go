@@ -20,10 +20,6 @@ func setupAppEnv() {
 	}
 
 	env.SetDefaultValue(envServerPort, "8080")
-
-	env.ValidateEnvKeys([]string{
-		envServerPort,
-	})
 }
 
 func getServerPort() string {

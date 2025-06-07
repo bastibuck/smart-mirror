@@ -8,8 +8,8 @@ import (
 type StravaWidget struct{}
 
 func (v *StravaWidget) SetupEnv() {
-	env.ValidateEnvKeys(getEnvKeys())
 	setDefaultEnv()
+	env.ValidateEnvKeys(getEnvKeys())
 }
 
 func (v *StravaWidget) SetupRouter(router *chi.Mux) {
