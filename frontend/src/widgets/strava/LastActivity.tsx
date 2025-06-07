@@ -54,8 +54,6 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
     return <WidgetPositioner {...widgetPositionerProps} />;
   }
 
-  const bounds = getMaxBounds(data.coordinates);
-
   return (
     <WidgetPositioner {...widgetPositionerProps}>
       <div className="relative h-full w-full">
@@ -63,12 +61,19 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
           onData={(e) => {
             if (
               e.dataType === "source" &&
-              e.sourceId === "strava-last-activity"
+              (e.sourceDataChanged || e.isSourceLoaded) &&
+              e.source.type === "geojson" &&
+              typeof e.source.data !== "string" &&
+              e.source.data.type === "Feature" &&
+              e.source.data.geometry.type === "LineString"
             ) {
-              e.target.fitBounds(bounds, {
-                animate: false,
-                padding: 40,
-              });
+              e.target.fitBounds(
+                getMaxBounds(e.source.data.geometry.coordinates),
+                {
+                  animate: false,
+                  padding: 40,
+                },
+              );
             }
           }}
           interactive={false}
@@ -76,7 +81,6 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         >
           <Source
             type="geojson"
-            id="strava-last-activity"
             data={{
               type: "Feature",
               properties: null,
