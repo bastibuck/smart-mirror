@@ -7,6 +7,9 @@ import { QRCodeSVG } from "qrcode.react";
 import MapLibre, { Layer, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import WidgetPositioner from "../_layout/WidgetPositioner";
+import TypeIcon from "./components/TypeIcon";
+import { formatDuration } from "./utils/date";
+import { StatValue } from "./components/Stats";
 
 const STRAVA_LOGIN_URL = `http://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${env.VITE_SERVER_URL}/strava/exchange-token&scope=profile:read_all,activity:read_all`;
 
@@ -77,34 +80,87 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
-      <MapLibre
-        onLoad={(e) => {
-          e.target.fitBounds(bounds, {
-            animate: false,
-          });
-        }}
-        interactive={false}
-        attributionControl={{ compact: false }}
-      >
-        <Source
-          type="geojson"
-          data={{
-            type: "Feature",
-            properties: null,
-            geometry: {
-              type: "LineString",
-              coordinates: data.coordinates,
-            },
+      <div className="relative h-full w-full">
+        <MapLibre
+          onLoad={(e) => {
+            e.target.fitBounds(bounds, {
+              animate: false,
+              padding: 40,
+            });
           }}
+          interactive={false}
+          attributionControl={{ compact: false }}
         >
-          <Layer
-            type="line"
-            paint={{
-              "line-color": "white",
+          <Source
+            type="geojson"
+            data={{
+              type: "Feature",
+              properties: null,
+              geometry: {
+                type: "LineString",
+                coordinates: data.coordinates,
+              },
             }}
-          />
-        </Source>
-      </MapLibre>
+          >
+            <Layer
+              type="line"
+              paint={{
+                "line-color": "#333",
+                "line-width": 3,
+              }}
+            />
+          </Source>
+        </MapLibre>
+
+        <div className="absolute inset-0 grid place-items-center">
+          <div className="space-y-2">
+            <TypeIcon type={data.type} className="text-muted-foreground" />
+
+            <StatValue
+              inline
+              label="km"
+              value={(data.distance_m / 1000).toFixed(1)}
+            />
+
+            <StatValue
+              inline
+              label="mm:ss"
+              value={formatDuration(data.moving_time_s, {
+                mode: data.type === "Run" ? "minutes" : "hours",
+              })}
+            />
+
+            {data.type === "Run" ? (
+              <>
+                <StatValue
+                  inline
+                  label="/km"
+                  value={formatDuration(
+                    (data.moving_time_s / 60 / (data.distance_m / 1000)) * 60,
+                    {
+                      mode: "minutes",
+                    },
+                  )}
+                />
+              </>
+            ) : null}
+
+            {data.type === "Ride" ? (
+              <>
+                <StatValue
+                  inline
+                  label="⌀ km/h"
+                  value={(
+                    data.distance_m /
+                    1000 /
+                    (data.moving_time_s / 60 / 60)
+                  ).toFixed(1)}
+                />
+              </>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </WidgetPositioner>
   );
 };
