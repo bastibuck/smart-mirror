@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/twpayne/go-polyline"
 	"smartmirror.server/shared"
 )
 
@@ -18,6 +19,9 @@ type stravaAPIResponse struct {
 	SportType  string  `json:"sport_type"`
 	Distance   float32 `json:"distance"`    // in meters
 	MovingTime float32 `json:"moving_time"` // in seconds
+	Map        struct {
+		SummaryPolyline string `json:"summary_polyline"`
+	} `json:"map"`
 }
 
 func fetchStravaData() (stravaStats, error) {
@@ -122,6 +126,98 @@ func fetchStravaData() (stravaStats, error) {
 	setCachedStravaStats(stats)
 
 	return stats, nil
+}
+
+func fetchLastActivity() (lastActivity, error) {
+	if cachedData, found := getCachedStravaLastActivity(); found {
+		return cachedData, nil
+	}
+
+	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" {
+		return lastActivity{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+	}
+
+	err := refreshStravaAccessToken()
+
+	if err != nil {
+		return lastActivity{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+	}
+
+	stravaAPIURL := "https://www.strava.com/api/v3/athlete/activities?per_page=1"
+
+	req, err := http.NewRequest("GET", stravaAPIURL, nil)
+	if err != nil {
+		return lastActivity{}, err
+	}
+
+	req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return lastActivity{}, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusUnauthorized {
+			return lastActivity{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+		}
+
+		return lastActivity{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+	}
+
+	var response []stravaAPIResponse
+
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		return lastActivity{}, err
+	}
+
+	if len(response) == 0 {
+		return lastActivity{}, fmt.Errorf("No activities found")
+	}
+
+	activity := response[0]
+
+	typeMap := map[string]string{
+		"Run":        "Run",
+		"VirtualRun": "Run",
+		"TrailRun":   "Run",
+
+		"Ride":              "Ride",
+		"GravelRide":        "Ride",
+		"VirtualRide":       "Ride",
+		"MountainBikeRide":  "Ride",
+		"EBikeRide":         "Ride",
+		"EMountainBikeRide": "Ride",
+
+		"Kitesurf": "Kite",
+
+		"Hike": "Hike",
+	}
+
+	buf := []byte(activity.Map.SummaryPolyline)
+	rawCoords, _, err := polyline.DecodeCoords(buf)
+
+	if err != nil {
+		return lastActivity{}, fmt.Errorf("Failed to decode polyline: %v", err)
+	}
+
+	normalizedCoords := make([][]float64, len(rawCoords))
+	for i, coord := range rawCoords {
+		normalizedCoords[i] = []float64{coord[1], coord[0]}
+	}
+
+	lastActivityData := lastActivity{
+		Coordinates: normalizedCoords,
+		Type:        typeMap[activity.SportType],
+		DistanceM:   int(activity.Distance),
+		MovingTimeS: int(activity.MovingTime),
+	}
+
+	setCachedStravaLastActivity(lastActivityData)
+
+	return lastActivityData, nil
 }
 
 type stravaRefreshTokenApiResponse struct {

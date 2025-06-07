@@ -6,12 +6,18 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-var statsCache = cache.New(30*time.Minute, 45*time.Minute)
+var cacheKeys = struct {
+	Annual       string
+	LastActivity string
+}{
+	Annual:       "annual_stats",
+	LastActivity: "last_activity",
+}
 
-const statsCacheKey = "strava_stats"
+var stravaCache = cache.New(30*time.Minute, 45*time.Minute)
 
 func getCachedStravaStats() (stravaStats, bool) {
-	stats, found := statsCache.Get(statsCacheKey)
+	stats, found := stravaCache.Get(cacheKeys.Annual)
 
 	if !found {
 		return stravaStats{}, false
@@ -21,5 +27,19 @@ func getCachedStravaStats() (stravaStats, bool) {
 }
 
 func setCachedStravaStats(stats stravaStats) {
-	statsCache.Set(statsCacheKey, stats, cache.DefaultExpiration)
+	stravaCache.Set(cacheKeys.Annual, stats, cache.DefaultExpiration)
+}
+
+func getCachedStravaLastActivity() (lastActivity, bool) {
+	activity, found := stravaCache.Get(cacheKeys.LastActivity)
+
+	if !found {
+		return lastActivity{}, false
+	}
+
+	return activity.(lastActivity), true
+}
+
+func setCachedStravaLastActivity(activity lastActivity) {
+	stravaCache.Set(cacheKeys.LastActivity, activity, cache.DefaultExpiration)
 }

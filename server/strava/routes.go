@@ -10,9 +10,11 @@ import (
 
 func RegisterStravaRoutes(router *chi.Mux) {
 	router.Route("/strava", func(subRouter chi.Router) {
-		subRouter.Get("/stats", statsHandler)
 		subRouter.Get("/exchange-token", exchangeTokenHandler)
 		subRouter.Get("/creds", credentialsHandler)
+
+		subRouter.Get("/annual", statsHandler)
+		subRouter.Get("/last-activity", lastActivityHandler)
 	})
 }
 
@@ -32,6 +34,26 @@ func statsHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(res).Encode(stats); err != nil {
+		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
+	}
+}
+
+func lastActivityHandler(res http.ResponseWriter, req *http.Request) {
+	lastActivity, err := fetchLastActivity()
+
+	if err != nil {
+		if err.Error() == "401" {
+			http.Error(res, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		http.Error(res, fmt.Sprintf("Failed to fetch last activity from Strava: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(res).Encode(lastActivity); err != nil {
 		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }

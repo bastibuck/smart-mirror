@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AnnualStats from "@/widgets/strava/AnnualStats";
 import Clock from "@/widgets/clock/Clock";
-import Map from "@/widgets/Map";
+import LastActivity from "@/widgets/strava/LastActivity";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -10,9 +10,9 @@ export const Route = createFileRoute("/")({
 function HomeComponent() {
   return (
     <>
-      <Clock position="top-right" />
+      <Clock position="top-left" />
 
-      <Map position="bottom-left" />
+      <LastActivity position="bottom-left" />
 
       <AnnualStats position="bottom-right" />
     </>
