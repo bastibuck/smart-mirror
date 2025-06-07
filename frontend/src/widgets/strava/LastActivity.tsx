@@ -82,17 +82,23 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
     <WidgetPositioner {...widgetPositionerProps}>
       <div className="relative h-full w-full">
         <MapLibre
-          onLoad={(e) => {
-            e.target.fitBounds(bounds, {
-              animate: false,
-              padding: 40,
-            });
+          onData={(e) => {
+            if (
+              e.dataType === "source" &&
+              e.sourceId === "strava-last-activity"
+            ) {
+              e.target.fitBounds(bounds, {
+                animate: false,
+                padding: 40,
+              });
+            }
           }}
           interactive={false}
           attributionControl={{ compact: false }}
         >
           <Source
             type="geojson"
+            id="strava-last-activity"
             data={{
               type: "Feature",
               properties: null,
