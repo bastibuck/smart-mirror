@@ -3,13 +3,7 @@ package version
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
-
-func RegisterVersionHashRoutes(router *chi.Mux) {
-	router.HandleFunc("/version-hash", versionHashHandler)
-}
 
 type versionHashHandlerResponse struct {
 	Hash string `json:"versionHash"`
@@ -19,7 +13,7 @@ func versionHashHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
 	versionHash := versionHashHandlerResponse{
-		Hash: getVersion(),
+		Hash: getVersionHash(),
 	}
 
 	if err := json.NewEncoder(res).Encode(versionHash); err != nil {

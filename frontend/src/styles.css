@@ -99,7 +99,7 @@
   --size-full: var(--cols);
 
   display: grid;
-  grid-template-rows: 1fr 350px 1fr;
+  grid-template-rows: 1fr 550px 1fr;
   grid-template-columns: 1fr 150px 1fr;
 
   .widget {

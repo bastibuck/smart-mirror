@@ -12,11 +12,13 @@ import Login from "./components/Login";
 
 const LastActivitySchema = z
   .object({
+    name: z.string(),
+    date: z.date({ coerce: true }),
+    type: z.enum(["Run", "Ride", "Hike", "Kite"]),
     coordinates: z
       .tuple([z.number(), z.number()])
       .array()
       .describe("Coordinates of the last activity in [lng, lat] format"),
-    type: z.enum(["Run", "Ride", "Hike", "Kite"]),
     distance_m: z.number(),
     moving_time_s: z.number(),
   })
@@ -100,9 +102,19 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
           </Source>
         </MapLibre>
 
-        <div className="absolute inset-0 grid place-items-center">
+        <div className="absolute inset-0 grid place-items-center text-shadow-black text-shadow-lg">
           <div className="space-y-2">
-            <TypeIcon type={data.type} className="text-muted-foreground" />
+            <div className="flex justify-between gap-2">
+              <StatValue
+                label={new Intl.DateTimeFormat("de-DE", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                  timeZone: "UTC",
+                }).format(data.date)}
+                value={data.name}
+              />
+              <TypeIcon type={data.type} className="text-muted-foreground" />
+            </div>
 
             <StatValue
               inline
