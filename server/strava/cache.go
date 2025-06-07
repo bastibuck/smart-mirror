@@ -3,7 +3,7 @@ package strava
 import (
 	"time"
 
-	"github.com/patrickmn/go-cache"
+	"smartmirror.server/cache"
 )
 
 var cacheKeys = struct {
@@ -14,32 +14,26 @@ var cacheKeys = struct {
 	LastActivity: "last_activity",
 }
 
-var stravaCache = cache.New(30*time.Minute, 45*time.Minute)
-
-func getCachedStravaStats() (stravaStats, bool) {
-	stats, found := stravaCache.Get(cacheKeys.Annual)
-
-	if !found {
-		return stravaStats{}, false
-	}
-
-	return stats.(stravaStats), true
+type StravaCache struct {
+	cache cache.Cache
 }
 
-func setCachedStravaStats(stats stravaStats) {
-	stravaCache.Set(cacheKeys.Annual, stats, cache.DefaultExpiration)
+var stravaCache = &StravaCache{
+	cache: cache.NewCache(30 * time.Minute),
 }
 
-func getCachedStravaLastActivity() (lastActivity, bool) {
-	activity, found := stravaCache.Get(cacheKeys.LastActivity)
-
-	if !found {
-		return lastActivity{}, false
-	}
-
-	return activity.(lastActivity), true
+func (s *StravaCache) GetAnnualStats() (stravaStats, bool) {
+	return cache.Get[stravaStats](s.cache, cacheKeys.Annual)
 }
 
-func setCachedStravaLastActivity(activity lastActivity) {
-	stravaCache.Set(cacheKeys.LastActivity, activity, cache.DefaultExpiration)
+func (s *StravaCache) SetAnnualStats(stats stravaStats) {
+	s.cache.Set(cacheKeys.Annual, stats)
+}
+
+func (s *StravaCache) GetLastActivity() (lastActivity, bool) {
+	return cache.Get[lastActivity](s.cache, cacheKeys.LastActivity)
+}
+
+func (s *StravaCache) SetLastActivity(activity lastActivity) {
+	s.cache.Set(cacheKeys.LastActivity, activity)
 }

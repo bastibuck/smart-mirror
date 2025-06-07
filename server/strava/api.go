@@ -25,7 +25,7 @@ type stravaAPIResponse struct {
 }
 
 func fetchStravaData() (stravaStats, error) {
-	if cachedData, found := getCachedStravaStats(); found {
+	if cachedData, found := stravaCache.GetAnnualStats(); found {
 		return cachedData, nil
 	}
 
@@ -123,13 +123,13 @@ func fetchStravaData() (stravaStats, error) {
 		Kiting:  Kiting,
 	}
 
-	setCachedStravaStats(stats)
+	stravaCache.SetAnnualStats(stats)
 
 	return stats, nil
 }
 
 func fetchLastActivity() (lastActivity, error) {
-	if cachedData, found := getCachedStravaLastActivity(); found {
+	if cachedData, found := stravaCache.GetLastActivity(); found {
 		return cachedData, nil
 	}
 
@@ -215,7 +215,7 @@ func fetchLastActivity() (lastActivity, error) {
 		MovingTimeS: int(activity.MovingTime),
 	}
 
-	setCachedStravaLastActivity(lastActivityData)
+	stravaCache.SetLastActivity(lastActivityData)
 
 	return lastActivityData, nil
 }
