@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/strava/token-failure")({
+export const Route = createFileRoute("/(sports)/strava/token-failure")({
   component: RouteComponent,
 });
 

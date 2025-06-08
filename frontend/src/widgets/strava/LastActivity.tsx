@@ -24,6 +24,8 @@ const LastActivitySchema = z
   })
   .nullable();
 
+type LastActivityType = NonNullable<z.infer<typeof LastActivitySchema>>;
+
 const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
   ...widgetPositionerProps
 }) => {
@@ -104,60 +106,8 @@ const LastActivity: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
 
         <div className="absolute inset-0 grid place-items-center text-shadow-black text-shadow-lg">
           <div className="space-y-2">
-            <div className="flex justify-between gap-2">
-              <StatValue
-                label={new Intl.DateTimeFormat("de-DE", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                  timeZone: "UTC",
-                }).format(data.date)}
-                value={data.name}
-              />
-              <TypeIcon type={data.type} className="text-muted-foreground" />
-            </div>
-
-            <StatValue
-              inline
-              label="km"
-              value={(data.distance_m / 1000).toFixed(1)}
-            />
-
-            <StatValue
-              inline
-              label="mm:ss"
-              value={formatDuration(data.moving_time_s, {
-                mode: data.type === "Run" ? "minutes" : "hours",
-              })}
-            />
-
-            {data.type === "Run" ? (
-              <>
-                <StatValue
-                  inline
-                  label="/km"
-                  value={formatDuration(
-                    (data.moving_time_s / 60 / (data.distance_m / 1000)) * 60,
-                    {
-                      mode: "minutes",
-                    },
-                  )}
-                />
-              </>
-            ) : null}
-
-            {data.type === "Ride" ? (
-              <>
-                <StatValue
-                  inline
-                  label="⌀ km/h"
-                  value={(
-                    data.distance_m /
-                    1000 /
-                    (data.moving_time_s / 60 / 60)
-                  ).toFixed(1)}
-                />
-              </>
-            ) : null}
+            <SharedInfo activity={data} />
+            <TypedInfo activity={data} />
           </div>
         </div>
       </div>
@@ -183,3 +133,122 @@ function getMaxBounds(coords: number[][]) {
 
   return [minLng, minLat, maxLng, maxLat] as [number, number, number, number];
 }
+
+const SharedInfo: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
+  return (
+    <>
+      <div className="flex justify-between gap-2">
+        <StatValue
+          label={new Intl.DateTimeFormat("de-DE", {
+            dateStyle: "medium",
+            timeStyle: "short",
+            timeZone: "UTC",
+          }).format(activity.date)}
+          value={activity.name}
+        />
+        <TypeIcon type={activity.type} className="text-muted-foreground" />
+      </div>
+
+      <StatValue
+        inline
+        label="km"
+        value={(activity.distance_m / 1000).toFixed(1)}
+      />
+    </>
+  );
+};
+
+const TypedInfo: React.FC<{
+  activity: LastActivityType;
+}> = ({ activity }) => {
+  switch (activity.type) {
+    case "Run":
+      return <Run activity={activity} />;
+
+    case "Ride":
+      return <Ride activity={activity} />;
+
+    case "Hike":
+      return <Hike activity={activity} />;
+
+    case "Kite":
+      return <Kite activity={activity} />;
+  }
+};
+
+const Run: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
+  const isMoreThanOneHour = activity.moving_time_s > 3600;
+
+  return (
+    <>
+      <StatValue
+        inline
+        label={isMoreThanOneHour ? "hh:mm:ss" : "mm:ss"}
+        value={formatDuration(activity.moving_time_s, {
+          showHours: isMoreThanOneHour,
+        })}
+      />
+
+      <StatValue
+        inline
+        label="/km"
+        value={formatDuration(
+          (activity.moving_time_s / 60 / (activity.distance_m / 1000)) * 60,
+          {
+            showHours: false,
+          },
+        )}
+      />
+    </>
+  );
+};
+
+const Ride: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
+  return (
+    <>
+      <StatValue
+        inline
+        label="hh:mm:ss"
+        value={formatDuration(activity.moving_time_s)}
+      />
+
+      <StatValue
+        inline
+        label="⌀ km/h"
+        value={(
+          activity.distance_m /
+          1000 /
+          (activity.moving_time_s / 60 / 60)
+        ).toFixed(1)}
+      />
+    </>
+  );
+};
+
+const Hike: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
+  return (
+    <>
+      <StatValue
+        inline
+        label="hh:mm"
+        value={formatDuration(activity.moving_time_s, {
+          showSeconds: false,
+        })}
+      />
+    </>
+  );
+};
+
+const Kite: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
+  return (
+    <>
+      <StatValue
+        inline
+        label="hh:mm"
+        value={formatDuration(activity.moving_time_s, {
+          showSeconds: false,
+        })}
+      />
+    </>
+  );
+};
