@@ -11,12 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as R2Import } from './routes/2'
 import { Route as IndexImport } from './routes/index'
 import { Route as sports1Import } from './routes/(sports)/1'
 import { Route as sportsStravaTokenSuccessImport } from './routes/(sports)/strava/token-success'
 import { Route as sportsStravaTokenFailureImport } from './routes/(sports)/strava/token-failure'
 
 // Create/Update Routes
+
+const R2Route = R2Import.update({
+  id: '/2',
+  path: '/2',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -53,6 +60,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/2': {
+      id: '/2'
+      path: '/2'
+      fullPath: '/2'
+      preLoaderRoute: typeof R2Import
+      parentRoute: typeof rootRoute
+    }
     '/(sports)/1': {
       id: '/(sports)/1'
       path: '/1'
@@ -81,6 +95,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/2': typeof R2Route
   '/1': typeof sports1Route
   '/strava/token-failure': typeof sportsStravaTokenFailureRoute
   '/strava/token-success': typeof sportsStravaTokenSuccessRoute
@@ -88,6 +103,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/2': typeof R2Route
   '/1': typeof sports1Route
   '/strava/token-failure': typeof sportsStravaTokenFailureRoute
   '/strava/token-success': typeof sportsStravaTokenSuccessRoute
@@ -96,6 +112,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/2': typeof R2Route
   '/(sports)/1': typeof sports1Route
   '/(sports)/strava/token-failure': typeof sportsStravaTokenFailureRoute
   '/(sports)/strava/token-success': typeof sportsStravaTokenSuccessRoute
@@ -103,12 +120,18 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/1' | '/strava/token-failure' | '/strava/token-success'
+  fullPaths:
+    | '/'
+    | '/2'
+    | '/1'
+    | '/strava/token-failure'
+    | '/strava/token-success'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/1' | '/strava/token-failure' | '/strava/token-success'
+  to: '/' | '/2' | '/1' | '/strava/token-failure' | '/strava/token-success'
   id:
     | '__root__'
     | '/'
+    | '/2'
     | '/(sports)/1'
     | '/(sports)/strava/token-failure'
     | '/(sports)/strava/token-success'
@@ -117,6 +140,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R2Route: typeof R2Route
   sports1Route: typeof sports1Route
   sportsStravaTokenFailureRoute: typeof sportsStravaTokenFailureRoute
   sportsStravaTokenSuccessRoute: typeof sportsStravaTokenSuccessRoute
@@ -124,6 +148,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R2Route: R2Route,
   sports1Route: sports1Route,
   sportsStravaTokenFailureRoute: sportsStravaTokenFailureRoute,
   sportsStravaTokenSuccessRoute: sportsStravaTokenSuccessRoute,
@@ -140,6 +165,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/2",
         "/(sports)/1",
         "/(sports)/strava/token-failure",
         "/(sports)/strava/token-success"
@@ -147,6 +173,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/2": {
+      "filePath": "2.tsx"
     },
     "/(sports)/1": {
       "filePath": "(sports)/1.tsx"
