@@ -1,20 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import AnnualStats from "@/widgets/strava/AnnualStats";
-import Clock from "@/widgets/clock/Clock";
-import LastActivity from "@/widgets/strava/LastActivity";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: HomeComponent,
+  beforeLoad: () => {
+    throw redirect({
+      to: "/1",
+    });
+  },
 });
-
-function HomeComponent() {
-  return (
-    <>
-      <Clock position="top-left" />
-
-      <LastActivity position="bottom-left" />
-
-      <AnnualStats position="bottom-right" />
-    </>
-  );
-}
