@@ -1,18 +1,18 @@
 const formatDuration = (
   seconds: number,
-  options: { mode: "minutes" | "hours" } = { mode: "hours" },
+  options?: {
+    showSeconds?: boolean;
+    showHours?: boolean;
+  },
 ): string => {
+  const showHours = options?.showHours ?? true;
+  const showSeconds = options?.showSeconds ?? true;
+
   const timeString = new Intl.DateTimeFormat("de-DE", {
     timeZone: "UTC",
-
-    ...(options.mode === "hours" && {
-      timeStyle: "short",
-    }),
-
-    ...(options.mode === "minutes" && {
-      minute: "2-digit",
-      second: "2-digit",
-    }),
+    hour: showHours ? "2-digit" : undefined,
+    minute: "2-digit",
+    second: showSeconds ? "2-digit" : undefined,
   }).format(new Date(seconds * 1000));
 
   return timeString;

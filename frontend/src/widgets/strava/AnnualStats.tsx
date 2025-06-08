@@ -60,7 +60,9 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         />
         <StatValue
           label="hh:mm"
-          value={formatDuration(data.running.moving_time_s)}
+          value={formatDuration(data.running.moving_time_s, {
+            showSeconds: false,
+          })}
         />
       </StatCategory>
 
@@ -72,7 +74,9 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         />
         <StatValue
           label="hh:mm"
-          value={formatDuration(data.cycling.moving_time_s)}
+          value={formatDuration(data.cycling.moving_time_s, {
+            showSeconds: false,
+          })}
         />
       </StatCategory>
 
@@ -84,7 +88,9 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         />
         <StatValue
           label="hh:mm"
-          value={formatDuration(data.hiking.moving_time_s)}
+          value={formatDuration(data.hiking.moving_time_s, {
+            showSeconds: false,
+          })}
         />
       </StatCategory>
 
@@ -96,7 +102,9 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
         />
         <StatValue
           label="hh:mm"
-          value={formatDuration(data.kiting.moving_time_s)}
+          value={formatDuration(data.kiting.moving_time_s, {
+            showSeconds: false,
+          })}
         />
       </StatCategory>
     </WidgetPositioner>
