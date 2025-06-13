@@ -6,19 +6,17 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-
-	"smartmirror.server/shared"
-	"smartmirror.server/strava"
-	"smartmirror.server/version"
 )
 
 func SetupRouter() *chi.Mux {
+	setupEnv()
+
 	router := chi.NewRouter()
 
 	// Middlewares
 	router.Use(middleware.Logger)
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{shared.GetCorsAllowedOrigin()},
+		AllowedOrigins: []string{getCorsAllowedOrigin()},
 		AllowedMethods: []string{"GET", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Content-Type"},
 		MaxAge:         300,
@@ -28,10 +26,6 @@ func SetupRouter() *chi.Mux {
 	router.Get("/", func(res http.ResponseWriter, req *http.Request) {
 		res.Write([]byte("Smart mirror server is running!"))
 	})
-
-	// Route Groups
-	strava.RegisterStravaRoutes(router)
-	version.RegisterVersionHashRoutes(router)
 
 	return router
 }

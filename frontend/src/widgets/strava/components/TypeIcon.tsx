@@ -14,7 +14,7 @@ const TypeIcon: React.FC<{
 }> = ({ type, className }) => {
   return React.cloneElement(ICON_MAP[type], {
     className,
-    size: 50,
+    size: 40,
   });
 };
 

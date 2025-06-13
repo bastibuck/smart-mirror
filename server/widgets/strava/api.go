@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/twpayne/go-polyline"
-	"smartmirror.server/shared"
+	"smartmirror.server/widgets/shared"
 )
 
 var GLOBAL_ExpiresAt int
 var GLOBAL_StravaAccessToken string
 var GLOBAL_StravaRefreshToken string
 
-type stravaAPIResponse struct {
+type athleteActivityResponseModel struct {
 	Name       string  `json:"name"`
 	SportType  string  `json:"sport_type"`
 	Distance   float32 `json:"distance"`    // in meters
@@ -22,27 +22,28 @@ type stravaAPIResponse struct {
 	Map        struct {
 		SummaryPolyline string `json:"summary_polyline"`
 	} `json:"map"`
+	StartDate string `json:"start_date_local"`
 }
 
-func fetchStravaData() (stravaStats, error) {
+func fetchStravaData() (annualStatsModel, error) {
 	if cachedData, found := stravaCache.GetAnnualStats(); found {
 		return cachedData, nil
 	}
 
 	// Check if the global Strava athlete ID and access token are set
 	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" {
-		return stravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return annualStatsModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
 	err := refreshStravaAccessToken()
 
 	if err != nil {
-		return stravaStats{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return annualStatsModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
 	var BEGINNING_OF_YEAR int64 = time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC).Unix()
 
-	var responseBucket []stravaAPIResponse
+	var responseBucket []athleteActivityResponseModel
 	page := 0
 	maxRequests := 20 // maximum number of requests to Strava API
 	for {
@@ -52,7 +53,7 @@ func fetchStravaData() (stravaStats, error) {
 
 		req, err := http.NewRequest("GET", stravaAPIURL, nil)
 		if err != nil {
-			return stravaStats{}, err
+			return annualStatsModel{}, err
 		}
 
 		req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
@@ -61,22 +62,22 @@ func fetchStravaData() (stravaStats, error) {
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			return stravaStats{}, err
+			return annualStatsModel{}, err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			if resp.StatusCode == http.StatusUnauthorized {
-				return stravaStats{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+				return annualStatsModel{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
 			}
 
-			return stravaStats{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+			return annualStatsModel{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
 		}
 
-		var response []stravaAPIResponse
+		var response []athleteActivityResponseModel
 
 		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			return stravaStats{}, err
+			return annualStatsModel{}, err
 		}
 
 		responseBucket = append(responseBucket, response...)
@@ -86,12 +87,12 @@ func fetchStravaData() (stravaStats, error) {
 		}
 	}
 
-	Running := sportStats{}
-	Hiking := sportStats{}
-	Cycling := sportStats{}
-	Kiting := sportStats{}
+	Running := sportStatsModel{}
+	Hiking := sportStatsModel{}
+	Cycling := sportStatsModel{}
+	Kiting := sportStatsModel{}
 
-	statsMap := map[string]*sportStats{
+	statsMap := map[string]*sportStatsModel{
 		"Run":        &Running,
 		"VirtualRun": &Running,
 		"TrailRun":   &Running,
@@ -116,7 +117,7 @@ func fetchStravaData() (stravaStats, error) {
 		}
 	}
 
-	stats := stravaStats{
+	stats := annualStatsModel{
 		Running: Running,
 		Hiking:  Hiking,
 		Cycling: Cycling,
@@ -128,26 +129,26 @@ func fetchStravaData() (stravaStats, error) {
 	return stats, nil
 }
 
-func fetchLastActivity() (lastActivity, error) {
+func fetchLastActivity() (lastActivityModel, error) {
 	if cachedData, found := stravaCache.GetLastActivity(); found {
 		return cachedData, nil
 	}
 
 	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" {
-		return lastActivity{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
 	err := refreshStravaAccessToken()
 
 	if err != nil {
-		return lastActivity{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
 	stravaAPIURL := "https://www.strava.com/api/v3/athlete/activities?per_page=1"
 
 	req, err := http.NewRequest("GET", stravaAPIURL, nil)
 	if err != nil {
-		return lastActivity{}, err
+		return lastActivityModel{}, err
 	}
 
 	req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
@@ -155,26 +156,26 @@ func fetchLastActivity() (lastActivity, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return lastActivity{}, err
+		return lastActivityModel{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusUnauthorized {
-			return lastActivity{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+			return lastActivityModel{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
 		}
 
-		return lastActivity{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
+		return lastActivityModel{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 
-	var response []stravaAPIResponse
+	var response []athleteActivityResponseModel
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return lastActivity{}, err
+		return lastActivityModel{}, err
 	}
 
 	if len(response) == 0 {
-		return lastActivity{}, fmt.Errorf("No activities found")
+		return lastActivityModel{}, fmt.Errorf("No activities found")
 	}
 
 	activity := response[0]
@@ -200,7 +201,7 @@ func fetchLastActivity() (lastActivity, error) {
 	rawCoords, _, err := polyline.DecodeCoords(buf)
 
 	if err != nil {
-		return lastActivity{}, fmt.Errorf("Failed to decode polyline: %v", err)
+		return lastActivityModel{}, fmt.Errorf("Failed to decode polyline: %v", err)
 	}
 
 	normalizedCoords := make([][]float64, len(rawCoords))
@@ -208,7 +209,9 @@ func fetchLastActivity() (lastActivity, error) {
 		normalizedCoords[i] = []float64{coord[1], coord[0]}
 	}
 
-	lastActivityData := lastActivity{
+	lastActivityData := lastActivityModel{
+		Name:        activity.Name,
+		Date:        activity.StartDate,
 		Coordinates: normalizedCoords,
 		Type:        typeMap[activity.SportType],
 		DistanceM:   int(activity.Distance),
@@ -220,7 +223,7 @@ func fetchLastActivity() (lastActivity, error) {
 	return lastActivityData, nil
 }
 
-type stravaRefreshTokenApiResponse struct {
+type refreshTokenResponseModel struct {
 	// TokenType    string `json:"token_type"`
 	AccessToken string `json:"access_token"`
 	ExpiresAt   int    `json:"expires_at"`
@@ -256,7 +259,7 @@ func refreshStravaAccessToken() error {
 		return fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 
-	var response stravaRefreshTokenApiResponse
+	var response refreshTokenResponseModel
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return err
@@ -269,7 +272,7 @@ func refreshStravaAccessToken() error {
 	return nil
 }
 
-type stravaExchangeTokenAPIResponse struct {
+type exchangeTokenResponseModel struct {
 	ExpiresAt    int    `json:"expires_at"`
 	RefreshToken string `json:"refresh_token"`
 	AccessToken  string `json:"access_token"`
@@ -302,7 +305,7 @@ func exchangeCodeForToken(code string) error {
 		return fmt.Errorf("Strava API returned status: %s", resp.Status)
 	}
 
-	var response stravaExchangeTokenAPIResponse
+	var response exchangeTokenResponseModel
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return fmt.Errorf("Failed decode response: %v", err)
@@ -315,16 +318,16 @@ func exchangeCodeForToken(code string) error {
 	return nil
 }
 
-func getStravaCredentials() (credentials, error) {
+func getStravaCredentials() (credentialsModel, error) {
 	if shared.GetAppMode() != "development" {
-		return credentials{}, fmt.Errorf("Strava credentials are only available in development mode")
+		return credentialsModel{}, fmt.Errorf("Strava credentials are only available in development mode")
 	}
 
 	if GLOBAL_StravaAccessToken == "" || GLOBAL_StravaRefreshToken == "" || GLOBAL_ExpiresAt == 0 {
-		return credentials{}, fmt.Errorf("Strava credentials are not set")
+		return credentialsModel{}, fmt.Errorf("Strava credentials are not set")
 	}
 
-	return credentials{
+	return credentialsModel{
 		AccessToken:  GLOBAL_StravaAccessToken,
 		RefreshToken: GLOBAL_StravaRefreshToken,
 		ExpiresAt:    GLOBAL_ExpiresAt,

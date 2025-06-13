@@ -1,27 +1,29 @@
 package strava
 
 // annual
-type stravaStats struct {
-	Running sportStats `json:"running"`
-	Cycling sportStats `json:"cycling"`
-	Hiking  sportStats `json:"hiking"`
-	Kiting  sportStats `json:"kiting"`
+type annualStatsModel struct {
+	Running sportStatsModel `json:"running"`
+	Cycling sportStatsModel `json:"cycling"`
+	Hiking  sportStatsModel `json:"hiking"`
+	Kiting  sportStatsModel `json:"kiting"`
 }
 
-type sportStats struct {
+type sportStatsModel struct {
 	Count       int `json:"count"`
 	MovingTimeS int `json:"moving_time_s"`
 	DistanceM   int `json:"distance_m"`
 }
 
-type credentials struct {
+type credentialsModel struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	ExpiresAt    int    `json:"expires_at"`
 }
 
 // last activity
-type lastActivity struct {
+type lastActivityModel struct {
+	Name        string      `json:"name"`
+	Date        string      `json:"date"`
 	Type        string      `json:"type"`
 	DistanceM   int         `json:"distance_m"`
 	MovingTimeS int         `json:"moving_time_s"`
