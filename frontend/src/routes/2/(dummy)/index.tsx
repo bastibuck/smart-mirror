@@ -1,7 +1,7 @@
 import Clock from "@/widgets/clock/Clock";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/2")({
+export const Route = createFileRoute("/2/(dummy)/")({
   component: DummyPage,
 });
 

@@ -4,7 +4,7 @@ import Clock from "@/widgets/clock/Clock";
 import LastActivity from "@/widgets/strava/LastActivity";
 import StepsOfWeek from "@/widgets/garmin/StepsOfWeek";
 
-export const Route = createFileRoute("/(sports)/1")({
+export const Route = createFileRoute("/1/(sports)/")({
   component: SportsPage,
 });
 
