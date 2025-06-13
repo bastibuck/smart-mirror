@@ -22,18 +22,18 @@ var stravaCache = &StravaCache{
 	cache: cache.NewCache(30 * time.Minute),
 }
 
-func (s *StravaCache) GetAnnualStats() (annualStatsModel, bool) {
+func (s *StravaCache) getAnnualStats() (annualStatsModel, bool) {
 	return cache.Get[annualStatsModel](s.cache, cacheKeys.Annual)
 }
 
-func (s *StravaCache) SetAnnualStats(stats annualStatsModel) {
+func (s *StravaCache) setAnnualStats(stats annualStatsModel) {
 	s.cache.Set(cacheKeys.Annual, stats)
 }
 
-func (s *StravaCache) GetLastActivity() (lastActivityModel, bool) {
+func (s *StravaCache) getLastActivity() (lastActivityModel, bool) {
 	return cache.Get[lastActivityModel](s.cache, cacheKeys.LastActivity)
 }
 
-func (s *StravaCache) SetLastActivity(activity lastActivityModel) {
+func (s *StravaCache) setLastActivity(activity lastActivityModel) {
 	s.cache.Set(cacheKeys.LastActivity, activity)
 }
