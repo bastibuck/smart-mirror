@@ -3,23 +3,19 @@ package garmin
 import "os"
 
 const (
-	envUsername = "GARMIN_USERNAME"
+	envEmail    = "GARMIN_EMAIL"
 	envPassword = "GARMIN_PASSWORD"
 )
 
-func GetEnvKeys() []string {
+func getEnvKeys() []string {
 	return []string{
-		envUsername,
+		envEmail,
 		envPassword,
 	}
 }
 
-func SetDefaultEnv() {
-
-}
-
-func getUsername() string {
-	return os.Getenv(envUsername)
+func getEmail() string {
+	return os.Getenv(envEmail)
 }
 
 func getPassword() string {

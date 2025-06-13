@@ -7,6 +7,7 @@ import (
 	"smartmirror.server/router"
 
 	"smartmirror.server/widgets"
+	"smartmirror.server/widgets/garmin"
 	"smartmirror.server/widgets/shared"
 	"smartmirror.server/widgets/strava"
 	"smartmirror.server/widgets/version"
@@ -21,6 +22,7 @@ func SetupApp() {
 		shared.NewSharedWidget(),
 		version.NewVersionWidget(),
 		strava.NewStravaWidget(),
+		garmin.NewGarminWidget(),
 	}, router)
 
 	// Start the server
