@@ -11,3 +11,7 @@ require github.com/joho/godotenv v1.5.1
 require github.com/patrickmn/go-cache v2.1.0+incompatible
 
 require github.com/twpayne/go-polyline v1.1.1
+
+require github.com/bastibuck/go-garmin v0.0.2
+
+require github.com/dghubble/oauth1 v0.7.3 // indirect
