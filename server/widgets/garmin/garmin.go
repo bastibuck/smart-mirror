@@ -1,7 +1,6 @@
 package garmin
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/bastibuck/go-garmin"
@@ -31,8 +30,6 @@ func getSevenDaySteps() (sevenDayStepsModel, error) {
 	if err != nil {
 		return sevenDayStepsModel{}, err
 	}
-
-	fmt.Printf("%+v\n", steps)
 
 	total := 0
 	dayCount := len(steps.Values)
