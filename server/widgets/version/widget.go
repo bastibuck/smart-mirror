@@ -3,9 +3,12 @@ package version
 import (
 	"github.com/go-chi/chi/v5"
 	"smartmirror.server/env"
+	"smartmirror.server/widgets"
 )
 
 type VersionWidget struct{}
+
+var _ widgets.Widget = (*VersionWidget)(nil)
 
 func (v *VersionWidget) SetupEnv() {
 	env.SetDefaultValue(envVersionHash, "notset")
