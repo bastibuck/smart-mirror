@@ -12,6 +12,7 @@ var GET_STEPS_COUNT int = 0
 
 func getSevenDaySteps() (sevenDayStepsModel, error) {
 	if cachedData, found := garminCache.getSevenDaySteps(); found {
+		logger("Using cached seven day steps data %d", cachedData.Total)
 		return cachedData, nil
 	}
 
