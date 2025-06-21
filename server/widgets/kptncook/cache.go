@@ -17,7 +17,7 @@ type KptnCookCache struct {
 }
 
 var kptnCookCache = &KptnCookCache{
-	cache: cache.NewCache(24 * time.Hour),
+	cache: cache.NewCache(1 * time.Hour),
 }
 
 func (s *KptnCookCache) getDailyRecipes() (dailyRecipesModel, bool) {

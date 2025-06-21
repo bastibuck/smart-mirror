@@ -2,7 +2,6 @@ package kptncook
 
 import (
 	"fmt"
-	"time"
 
 	"smartmirror.server/utils"
 )
@@ -14,11 +13,6 @@ type dailyRecipesResponse []struct {
 func getDailyRecipes() (dailyRecipesModel, error) {
 	if dailyRecipes, found := kptnCookCache.getDailyRecipes(); found {
 		return dailyRecipes, nil
-	}
-
-	// run initial after start up to fill the 24h cache in the morning for the first time. This makes it so that the following days always have fresh data in the morning
-	if time.Now().Hour() > 5 {
-		return dailyRecipesModel{}, nil
 	}
 
 	var response dailyRecipesResponse
