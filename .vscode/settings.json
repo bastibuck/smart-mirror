@@ -2,6 +2,8 @@
   "eslint.useFlatConfig": true,
   "editor.formatOnSave": true,
   "cSpell.words": [
+    "Kptn",
+    "kptncook",
     "maplibre",
     "smartmirror",
     "strava"
