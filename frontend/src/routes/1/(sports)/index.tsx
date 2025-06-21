@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import AnnualStats from "@/widgets/strava/AnnualStats";
 import Clock from "@/widgets/clock/Clock";
 import LastActivity from "@/widgets/strava/LastActivity";
+import NextDepartures from "@/widgets/kvg/NextDepartures";
 // import StepsOfWeek from "@/widgets/garmin/StepsOfWeek";
 
 export const Route = createFileRoute("/1/(sports)/")({
@@ -13,6 +14,7 @@ function SportsPage() {
     <>
       <Clock position="top-left" />
       {/* <StepsOfWeek position="top-right" /> */}
+      <NextDepartures position="top-right" />
       <LastActivity position="bottom-left" />
       <AnnualStats position="bottom-right" />
     </>
