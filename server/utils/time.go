@@ -10,6 +10,10 @@ func MinutesBetween(t1, t2 string) (int, error) {
 	h1m := strings.Split(t1, ":")
 	h2m := strings.Split(t2, ":")
 
+	if len(h1m) < 2 || len(h2m) < 2 {
+		return 0, fmt.Errorf("invalid time format: '%s' or '%s'", t1, t2)
+	}
+
 	h1, err1 := strconv.Atoi(h1m[0])
 	m1, err2 := strconv.Atoi(h1m[1])
 	h2, err3 := strconv.Atoi(h2m[0])
