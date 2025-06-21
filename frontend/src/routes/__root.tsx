@@ -19,6 +19,7 @@ import { ApiError } from "@/lib/api";
 import { useKeyPressEvent } from "react-use";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,37 @@ function RootComponent() {
 
   useKeyPressEvent("ArrowLeft", navigateInDirection);
   useKeyPressEvent("ArrowRight", navigateInDirection);
+
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => {
+        const currentPath = location.pathname;
+
+        const currentPageNumber = parseInt(currentPath.split("/").pop()!, 10);
+        if (typeof currentPageNumber !== "number" || isNaN(currentPageNumber)) {
+          return;
+        }
+
+        const direction = currentPageNumber === 1 ? "next" : "previous";
+
+        const targetPageNumber =
+          direction === "next" ? currentPageNumber + 1 : currentPageNumber - 1;
+
+        const to = `/${targetPageNumber}`;
+        navigate({
+          to,
+          viewTransition: {
+            types: [direction === "next" ? "slide-left" : "slide-right"],
+          },
+        });
+      },
+      1000 * 30, // 30 seconds,
+    );
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [location.pathname, navigate]);
 
   return (
     <>
