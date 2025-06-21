@@ -10,6 +10,7 @@ type RelaxedHttpRequestOptions struct {
 	URL      string
 	Method   string
 	Response interface{}
+	Headers  map[string]string
 }
 
 func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
@@ -23,6 +24,10 @@ func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 		return fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
+	for key, value := range req.Headers {
+		httpReq.Header.Set(key, value)
+	}
+
 	resp, err := client.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("failed to execute HTTP request: %w", err)
@@ -30,6 +35,10 @@ func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusUnauthorized {
+			return fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		}
+
 		return fmt.Errorf("HTTP request failed with status: %s", resp.Status)
 	}
 
