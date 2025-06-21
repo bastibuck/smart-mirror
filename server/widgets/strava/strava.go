@@ -49,9 +49,9 @@ func fetchStravaData() (annualStatsModel, error) {
 	for {
 		page++
 
-		stravaAPIURL := fmt.Sprintf("https://www.strava.com/api/v3/athlete/activities?after=%d&page=%d&per_page=200", BEGINNING_OF_YEAR, page)
+		stravaAnnualActivitiesUrl := fmt.Sprintf("https://www.strava.com/api/v3/athlete/activities?after=%d&page=%d&per_page=200", BEGINNING_OF_YEAR, page)
 
-		req, err := http.NewRequest("GET", stravaAPIURL, nil)
+		req, err := http.NewRequest("GET", stravaAnnualActivitiesUrl, nil)
 		if err != nil {
 			return annualStatsModel{}, err
 		}
@@ -144,9 +144,9 @@ func fetchLastActivity() (lastActivityModel, error) {
 		return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
-	stravaAPIURL := "https://www.strava.com/api/v3/athlete/activities?per_page=1"
+	stravaActivitiesUrl := "https://www.strava.com/api/v3/athlete/activities?per_page=1"
 
-	req, err := http.NewRequest("GET", stravaAPIURL, nil)
+	req, err := http.NewRequest("GET", stravaActivitiesUrl, nil)
 	if err != nil {
 		return lastActivityModel{}, err
 	}

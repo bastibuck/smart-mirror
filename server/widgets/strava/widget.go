@@ -3,9 +3,12 @@ package strava
 import (
 	"github.com/go-chi/chi/v5"
 	"smartmirror.server/env"
+	"smartmirror.server/widgets"
 )
 
 type StravaWidget struct{}
+
+var _ widgets.Widget = (*StravaWidget)(nil)
 
 func (v *StravaWidget) SetupEnv() {
 	setDefaultEnv()
