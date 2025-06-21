@@ -11,7 +11,7 @@ import (
 type RelaxedHttpRequestOptions struct {
 	URL      string
 	Method   string
-	Response interface{}
+	Response interface{} // The response should be a pointer to a struct where the JSON response will be decoded into
 	Headers  map[string]string
 	Delay    RelaxedHttpRequestDelay
 }
