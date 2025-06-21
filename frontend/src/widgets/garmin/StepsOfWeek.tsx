@@ -31,6 +31,7 @@ const StepsOfWeek: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["steps", "week"],
     queryFn: () => fetchUtil("/steps/weekly", StepsOfWeekSchema),
+    retry: false,
   });
 
   if (isError) {

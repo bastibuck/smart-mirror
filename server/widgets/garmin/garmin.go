@@ -1,6 +1,7 @@
 package garmin
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/bastibuck/go-garmin"
@@ -15,7 +16,7 @@ func getSevenDaySteps() (sevenDayStepsModel, error) {
 	err := client.Login(getEmail(), getPassword())
 
 	if err != nil {
-		return sevenDayStepsModel{}, err
+		return sevenDayStepsModel{}, fmt.Errorf("failed to login to Garmin: %w", err)
 	}
 
 	api := garmin.NewAPI(client)
@@ -28,7 +29,7 @@ func getSevenDaySteps() (sevenDayStepsModel, error) {
 	)
 
 	if err != nil {
-		return sevenDayStepsModel{}, err
+		return sevenDayStepsModel{}, fmt.Errorf("failed to get daily steps: %w", err)
 	}
 
 	total := 0
