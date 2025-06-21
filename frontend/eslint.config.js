@@ -6,6 +6,7 @@ import pluginRouter from "@tanstack/eslint-plugin-router";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import { defineConfig } from "eslint/config";
+import reactHooks from "eslint-plugin-react-hooks";
 
 const isStrict =
   typeof process !== "undefined" &&
@@ -34,6 +35,8 @@ export default defineConfig([
   ...pluginQuery.configs["flat/recommended"],
 
   eslintConfigPrettier,
+
+  reactHooks.configs["recommended-latest"],
 
   // Overrides at the end to ensure they are not overwritten
   {
