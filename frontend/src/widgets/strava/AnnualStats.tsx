@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import WidgetPositioner from "../_layout/WidgetPositioner";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ApiError, fetchUtil } from "@/lib/api";
 import TypeIcon from "./components/TypeIcon";
 import { StatCategory, StatValue } from "./components/Stats";

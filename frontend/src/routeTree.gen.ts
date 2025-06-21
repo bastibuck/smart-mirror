@@ -8,118 +8,63 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as R2dummyIndexRouteImport } from './routes/2/(dummy)/index'
+import { Route as R1sportsIndexRouteImport } from './routes/1/(sports)/index'
+import { Route as redirect_urlsStravaTokenSuccessRouteImport } from './routes/(redirect_urls)/strava/token-success'
+import { Route as redirect_urlsStravaTokenFailureRouteImport } from './routes/(redirect_urls)/strava/token-failure'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as R2dummyIndexImport } from './routes/2/(dummy)/index'
-import { Route as R1sportsIndexImport } from './routes/1/(sports)/index'
-import { Route as redirecturlsStravaTokenSuccessImport } from './routes/(redirect_urls)/strava/token-success'
-import { Route as redirecturlsStravaTokenFailureImport } from './routes/(redirect_urls)/strava/token-failure'
-
-// Create/Update Routes
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R2dummyIndexRoute = R2dummyIndexImport.update({
+const R2dummyIndexRoute = R2dummyIndexRouteImport.update({
   id: '/2/(dummy)/',
   path: '/2/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R1sportsIndexRoute = R1sportsIndexImport.update({
+const R1sportsIndexRoute = R1sportsIndexRouteImport.update({
   id: '/1/(sports)/',
   path: '/1/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const redirecturlsStravaTokenSuccessRoute =
-  redirecturlsStravaTokenSuccessImport.update({
+const redirect_urlsStravaTokenSuccessRoute =
+  redirect_urlsStravaTokenSuccessRouteImport.update({
     id: '/(redirect_urls)/strava/token-success',
     path: '/strava/token-success',
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => rootRouteImport,
   } as any)
-
-const redirecturlsStravaTokenFailureRoute =
-  redirecturlsStravaTokenFailureImport.update({
+const redirect_urlsStravaTokenFailureRoute =
+  redirect_urlsStravaTokenFailureRouteImport.update({
     id: '/(redirect_urls)/strava/token-failure',
     path: '/strava/token-failure',
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => rootRouteImport,
   } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/(redirect_urls)/strava/token-failure': {
-      id: '/(redirect_urls)/strava/token-failure'
-      path: '/strava/token-failure'
-      fullPath: '/strava/token-failure'
-      preLoaderRoute: typeof redirecturlsStravaTokenFailureImport
-      parentRoute: typeof rootRoute
-    }
-    '/(redirect_urls)/strava/token-success': {
-      id: '/(redirect_urls)/strava/token-success'
-      path: '/strava/token-success'
-      fullPath: '/strava/token-success'
-      preLoaderRoute: typeof redirecturlsStravaTokenSuccessImport
-      parentRoute: typeof rootRoute
-    }
-    '/1/(sports)/': {
-      id: '/1/(sports)/'
-      path: '/1'
-      fullPath: '/1'
-      preLoaderRoute: typeof R1sportsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/2/(dummy)/': {
-      id: '/2/(dummy)/'
-      path: '/2'
-      fullPath: '/2'
-      preLoaderRoute: typeof R2dummyIndexImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/strava/token-failure': typeof redirecturlsStravaTokenFailureRoute
-  '/strava/token-success': typeof redirecturlsStravaTokenSuccessRoute
+  '/strava/token-failure': typeof redirect_urlsStravaTokenFailureRoute
+  '/strava/token-success': typeof redirect_urlsStravaTokenSuccessRoute
   '/1': typeof R1sportsIndexRoute
   '/2': typeof R2dummyIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/strava/token-failure': typeof redirecturlsStravaTokenFailureRoute
-  '/strava/token-success': typeof redirecturlsStravaTokenSuccessRoute
+  '/strava/token-failure': typeof redirect_urlsStravaTokenFailureRoute
+  '/strava/token-success': typeof redirect_urlsStravaTokenSuccessRoute
   '/1': typeof R1sportsIndexRoute
   '/2': typeof R2dummyIndexRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/(redirect_urls)/strava/token-failure': typeof redirecturlsStravaTokenFailureRoute
-  '/(redirect_urls)/strava/token-success': typeof redirecturlsStravaTokenSuccessRoute
+  '/(redirect_urls)/strava/token-failure': typeof redirect_urlsStravaTokenFailureRoute
+  '/(redirect_urls)/strava/token-success': typeof redirect_urlsStravaTokenSuccessRoute
   '/1/(sports)/': typeof R1sportsIndexRoute
   '/2/(dummy)/': typeof R2dummyIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -139,55 +84,61 @@ export interface FileRouteTypes {
     | '/2/(dummy)/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  redirecturlsStravaTokenFailureRoute: typeof redirecturlsStravaTokenFailureRoute
-  redirecturlsStravaTokenSuccessRoute: typeof redirecturlsStravaTokenSuccessRoute
+  redirect_urlsStravaTokenFailureRoute: typeof redirect_urlsStravaTokenFailureRoute
+  redirect_urlsStravaTokenSuccessRoute: typeof redirect_urlsStravaTokenSuccessRoute
   R1sportsIndexRoute: typeof R1sportsIndexRoute
   R2dummyIndexRoute: typeof R2dummyIndexRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  redirecturlsStravaTokenFailureRoute: redirecturlsStravaTokenFailureRoute,
-  redirecturlsStravaTokenSuccessRoute: redirecturlsStravaTokenSuccessRoute,
-  R1sportsIndexRoute: R1sportsIndexRoute,
-  R2dummyIndexRoute: R2dummyIndexRoute,
-}
-
-export const routeTree = rootRoute
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/(redirect_urls)/strava/token-failure",
-        "/(redirect_urls)/strava/token-success",
-        "/1/(sports)/",
-        "/2/(dummy)/"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/(redirect_urls)/strava/token-failure": {
-      "filePath": "(redirect_urls)/strava/token-failure.tsx"
-    },
-    "/(redirect_urls)/strava/token-success": {
-      "filePath": "(redirect_urls)/strava/token-success.tsx"
-    },
-    "/1/(sports)/": {
-      "filePath": "1/(sports)/index.tsx"
-    },
-    "/2/(dummy)/": {
-      "filePath": "2/(dummy)/index.tsx"
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/2/(dummy)/': {
+      id: '/2/(dummy)/'
+      path: '/2'
+      fullPath: '/2'
+      preLoaderRoute: typeof R2dummyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/1/(sports)/': {
+      id: '/1/(sports)/'
+      path: '/1'
+      fullPath: '/1'
+      preLoaderRoute: typeof R1sportsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(redirect_urls)/strava/token-success': {
+      id: '/(redirect_urls)/strava/token-success'
+      path: '/strava/token-success'
+      fullPath: '/strava/token-success'
+      preLoaderRoute: typeof redirect_urlsStravaTokenSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(redirect_urls)/strava/token-failure': {
+      id: '/(redirect_urls)/strava/token-failure'
+      path: '/strava/token-failure'
+      fullPath: '/strava/token-failure'
+      preLoaderRoute: typeof redirect_urlsStravaTokenFailureRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-ROUTE_MANIFEST_END */
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  redirect_urlsStravaTokenFailureRoute: redirect_urlsStravaTokenFailureRoute,
+  redirect_urlsStravaTokenSuccessRoute: redirect_urlsStravaTokenSuccessRoute,
+  R1sportsIndexRoute: R1sportsIndexRoute,
+  R2dummyIndexRoute: R2dummyIndexRoute,
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()

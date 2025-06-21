@@ -3,9 +3,12 @@ package garmin
 import (
 	"github.com/go-chi/chi/v5"
 	"smartmirror.server/env"
+	"smartmirror.server/widgets"
 )
 
 type GarminWidget struct{}
+
+var _ widgets.Widget = (*GarminWidget)(nil)
 
 func (v *GarminWidget) SetupEnv() {
 	env.ValidateEnvKeys(getEnvKeys())

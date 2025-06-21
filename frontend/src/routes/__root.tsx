@@ -39,6 +39,7 @@ const queryClient = new QueryClient({
 
   queryCache: new QueryCache({
     onError: (error) => {
+      // eslint-disable-next-line no-console
       console.error("global error in query: ", error);
     },
   }),
