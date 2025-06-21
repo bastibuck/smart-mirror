@@ -162,7 +162,7 @@ func fetchLastActivity() (lastActivityModel, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusUnauthorized {
-			return lastActivityModel{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
+			return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 		}
 
 		return lastActivityModel{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
