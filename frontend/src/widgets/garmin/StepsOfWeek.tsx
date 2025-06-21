@@ -2,7 +2,7 @@ import React from "react";
 import WidgetPositioner from "../_layout/WidgetPositioner";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUtil } from "@/lib/api";
-import { z } from "zod";
+import { z } from "zod/v4";
 import {
   Bar,
   BarChart,
@@ -20,7 +20,7 @@ const StepsOfWeekSchema = z.object({
   days: z
     .object({
       steps: z.number().nonnegative().int(),
-      date: z.date({ coerce: true }),
+      date: z.coerce.date(),
     })
     .array(),
 });

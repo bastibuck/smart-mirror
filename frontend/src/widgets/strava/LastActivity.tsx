@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiError, fetchUtil } from "@/lib/api";
-import { z } from "zod";
+import { z } from "zod/v4";
 import MapLibre, { Layer, Source } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import WidgetPositioner from "../_layout/WidgetPositioner";
@@ -13,7 +13,7 @@ import Login from "./components/Login";
 const LastActivitySchema = z
   .object({
     name: z.string(),
-    date: z.date({ coerce: true }),
+    date: z.coerce.date(),
     type: z.enum(["Run", "Ride", "Hike", "Kite"]),
     coordinates: z
       .tuple([z.number(), z.number()])
