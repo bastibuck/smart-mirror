@@ -22,6 +22,10 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 	err := utils.RelaxedHttpRequest(utils.RelaxedHttpRequestOptions{
 		URL:      fmt.Sprintf("https://kvg-internetservice-proxy.p.networkteam.com/internetservice/services/passageInfo/stopPassages/stop?stop=%s", getHomeStopID()),
 		Response: &response,
+		Delay: utils.RelaxedHttpRequestDelay{
+			Variance: 50,
+			Average:  1000,
+		},
 	})
 	if err != nil {
 		return nextDeparturesResponse{}, fmt.Errorf("Failed to fetch KVG stop info: %v", err)

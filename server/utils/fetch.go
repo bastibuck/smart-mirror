@@ -3,7 +3,9 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand/v2"
 	"net/http"
+	"time"
 )
 
 type RelaxedHttpRequestOptions struct {
@@ -11,7 +13,13 @@ type RelaxedHttpRequestOptions struct {
 	Method   string
 	Response interface{}
 	Headers  map[string]string
+	Delay    RelaxedHttpRequestDelay
 }
+
+type RelaxedHttpRequestDelay struct {
+	Variance int // percent
+	Average  int // milliseconds
+} // Delay before making the request to avoid rate limiting. It can be modified with a variance to simulate more realistic behavior
 
 func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 	if req.Method == "" {
@@ -26,6 +34,17 @@ func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 
 	for key, value := range req.Headers {
 		httpReq.Header.Set(key, value)
+	}
+
+	if req.Delay.Average > 0 {
+		variance := float64(req.Delay.Average) * float64(req.Delay.Variance) / 100.0
+
+		min := float64(req.Delay.Average) - variance
+		max := float64(req.Delay.Average) + variance
+
+		randomDelay := min + rand.Float64()*(max-min)
+
+		time.Sleep(time.Duration(randomDelay) * time.Millisecond)
 	}
 
 	resp, err := client.Do(httpReq)
