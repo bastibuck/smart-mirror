@@ -1,12 +1,11 @@
 package strava
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/twpayne/go-polyline"
+	"smartmirror.server/utils"
 	"smartmirror.server/widgets/shared"
 )
 
@@ -51,33 +50,22 @@ func fetchStravaData() (annualStatsModel, error) {
 
 		stravaAnnualActivitiesUrl := fmt.Sprintf("https://www.strava.com/api/v3/athlete/activities?after=%d&page=%d&per_page=200", BEGINNING_OF_YEAR, page)
 
-		req, err := http.NewRequest("GET", stravaAnnualActivitiesUrl, nil)
-		if err != nil {
-			return annualStatsModel{}, err
-		}
-
-		req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
-
-		// Make the HTTP request
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			return annualStatsModel{}, err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			if resp.StatusCode == http.StatusUnauthorized {
-				return annualStatsModel{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
-			}
-
-			return annualStatsModel{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
-		}
-
 		var response []athleteActivityResponseModel
 
-		if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-			return annualStatsModel{}, err
+		err = utils.RelaxedHttpRequest(utils.RelaxedHttpRequestOptions{
+			URL:      stravaAnnualActivitiesUrl,
+			Response: &response,
+			Headers: map[string]string{
+				"Authorization": "Bearer " + GLOBAL_StravaAccessToken,
+			},
+		})
+
+		if err != nil {
+			if err.Error() == "401" {
+				return annualStatsModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+			}
+
+			return annualStatsModel{}, fmt.Errorf("Failed to fetch annual activities from strava: %v", err)
 		}
 
 		responseBucket = append(responseBucket, response...)
@@ -144,34 +132,22 @@ func fetchLastActivity() (lastActivityModel, error) {
 		return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
 	}
 
-	stravaActivitiesUrl := "https://www.strava.com/api/v3/athlete/activities?per_page=1"
-
-	req, err := http.NewRequest("GET", stravaActivitiesUrl, nil)
-	if err != nil {
-		return lastActivityModel{}, err
-	}
-
-	req.Header.Set("Authorization", "Bearer "+GLOBAL_StravaAccessToken)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return lastActivityModel{}, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusUnauthorized {
-			return lastActivityModel{}, fmt.Errorf("%d", resp.StatusCode) // TODO? make this return directly instead of passing outside as string?
-		}
-
-		return lastActivityModel{}, fmt.Errorf("Strava API returned status: %s", resp.Status)
-	}
-
 	var response []athleteActivityResponseModel
 
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return lastActivityModel{}, err
+	err = utils.RelaxedHttpRequest(utils.RelaxedHttpRequestOptions{
+		URL:      "https://www.strava.com/api/v3/athlete/activities?per_page=1",
+		Response: &response,
+		Headers: map[string]string{
+			"Authorization": "Bearer " + GLOBAL_StravaAccessToken,
+		},
+	})
+
+	if err != nil {
+		if err.Error() == "401" {
+			return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		}
+
+		return lastActivityModel{}, fmt.Errorf("Failed to fetch last activity from strava: %v", err)
 	}
 
 	if len(response) == 0 {
@@ -237,32 +213,26 @@ func refreshStravaAccessToken() error {
 		return nil
 	}
 
+	var response refreshTokenResponseModel
+
 	url := "https://www.strava.com/oauth/token" +
 		"?client_id=" + getStravaClientId() +
 		"&client_secret=" + getStravaClientSecret() +
 		"&refresh_token=" + GLOBAL_StravaRefreshToken +
 		"&grant_type=refresh_token"
 
-	req, err := http.NewRequest("POST", url, nil)
+	err := utils.RelaxedHttpRequest(utils.RelaxedHttpRequestOptions{
+		URL:      url,
+		Method:   "POST",
+		Response: &response,
+	})
+
 	if err != nil {
-		return err
-	}
+		if err.Error() == "401" {
+			return fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Strava API returned status: %s", resp.Status)
-	}
-
-	var response refreshTokenResponseModel
-
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return err
+		return fmt.Errorf("Failed to refresh access token: %v", err)
 	}
 
 	GLOBAL_StravaAccessToken = response.AccessToken
@@ -282,33 +252,26 @@ type exchangeTokenResponseModel struct {
 }
 
 func exchangeCodeForToken(code string) error {
+	var response exchangeTokenResponseModel
+
 	url := "https://www.strava.com/oauth/token" +
 		"?client_id=" + getStravaClientId() +
 		"&client_secret=" + getStravaClientSecret() +
 		"&code=" + code +
 		"&grant_type=authorization_code"
 
-	req, err := http.NewRequest("POST", url, nil)
+	err := utils.RelaxedHttpRequest(utils.RelaxedHttpRequestOptions{
+		URL:      url,
+		Method:   "POST",
+		Response: &response,
+	})
+
 	if err != nil {
-		return fmt.Errorf("Failed to create request: %v", err)
-	}
+		if err.Error() == "401" {
+			return fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		}
 
-	// call strava api to exchange token
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("Failed to exchange token: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Strava API returned status: %s", resp.Status)
-	}
-
-	var response exchangeTokenResponseModel
-
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return fmt.Errorf("Failed decode response: %v", err)
+		return fmt.Errorf("Failed to exchange code for token: %v", err)
 	}
 
 	GLOBAL_StravaAccessToken = response.AccessToken
