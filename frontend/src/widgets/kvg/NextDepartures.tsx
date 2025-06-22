@@ -47,22 +47,23 @@ const NextDepartures: React.FC<
         <div className="text-3xl font-semibold">{data.stopName}</div>
 
         {data.departures.map((departure) => (
-          <>
-            <div className="flex gap-6">
-              <div
-                className={cn("text-left font-mono text-lg", {
-                  "font-black text-red-500 italic": departure.delayMinutes,
-                })}
-              >
-                <span>{departure.departureTime} </span>
-              </div>
-
-              <div className="flex gap-2">
-                <span className="font-mono text-lg">{departure.line}</span>
-                <span className="text-lg">{departure.destination}</span>
-              </div>
+          <div
+            className="flex gap-6"
+            key={`${departure.line}-${departure.destination}-${departure.departureTime}`}
+          >
+            <div
+              className={cn("text-left font-mono text-lg", {
+                "font-black text-red-500 italic": departure.delayMinutes,
+              })}
+            >
+              <span>{departure.departureTime} </span>
             </div>
-          </>
+
+            <div className="flex gap-2">
+              <span className="font-mono text-lg">{departure.line}</span>
+              <span className="text-lg">{departure.destination}</span>
+            </div>
+          </div>
         ))}
       </div>
     </WidgetPositioner>
