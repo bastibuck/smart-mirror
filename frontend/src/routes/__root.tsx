@@ -3,13 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRoute,
-  useNavigate,
-  useRouter,
-  useRouterState,
-} from "@tanstack/react-router";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { cn } from "@/lib/utils";
@@ -18,8 +12,7 @@ import AutoReloader from "@/components/AutoReloader";
 import { ApiError } from "@/lib/api";
 import { useKeyPressEvent } from "react-use";
 import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
-import { useEffect } from "react";
+import { useAutoRotateRoutes, useDirectionalNavigate } from "@/lib/navigation";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,75 +44,16 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  const navigate = useNavigate();
+  useAutoRotateRoutes();
 
-  const { location } = useRouterState();
-  const { routesByPath } = useRouter();
+  const { directionalNavigate } = useDirectionalNavigate();
 
-  const navigateInDirection = (event: KeyboardEvent) => {
-    const direction = event.key === "ArrowRight" ? "next" : "previous";
-
-    const currentPath = location.pathname;
-
-    const currentPageNumber = parseInt(currentPath.split("/").pop()!, 10);
-    if (typeof currentPageNumber !== "number" || isNaN(currentPageNumber)) {
-      return;
-    }
-
-    const targetPageNumber =
-      direction === "next" ? currentPageNumber + 1 : currentPageNumber - 1;
-
-    const to = `/${targetPageNumber}`;
-
-    const allRoutes = new Set(Object.keys(routesByPath));
-    if (!allRoutes.has(to)) {
-      toast.error(`No ${direction} page found`, {
-        className: "!bg-destructive !text-foreground",
-      });
-      return;
-    }
-
-    navigate({
-      to,
-      viewTransition: {
-        types: [direction === "next" ? "slide-left" : "slide-right"],
-      },
-    });
-  };
-
-  useKeyPressEvent("ArrowLeft", navigateInDirection);
-  useKeyPressEvent("ArrowRight", navigateInDirection);
-
-  useEffect(() => {
-    const intervalId = setInterval(
-      () => {
-        const currentPath = location.pathname;
-
-        const currentPageNumber = parseInt(currentPath.split("/").pop()!, 10);
-        if (typeof currentPageNumber !== "number" || isNaN(currentPageNumber)) {
-          return;
-        }
-
-        const direction = currentPageNumber === 1 ? "next" : "previous";
-
-        const targetPageNumber =
-          direction === "next" ? currentPageNumber + 1 : currentPageNumber - 1;
-
-        const to = `/${targetPageNumber}`;
-        navigate({
-          to,
-          viewTransition: {
-            types: [direction === "next" ? "slide-left" : "slide-right"],
-          },
-        });
-      },
-      1000 * 30, // 30 seconds,
-    );
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [location.pathname, navigate]);
+  useKeyPressEvent("ArrowLeft", () => {
+    directionalNavigate("previous");
+  });
+  useKeyPressEvent("ArrowRight", () => {
+    directionalNavigate("next");
+  });
 
   return (
     <>
