@@ -34,7 +34,13 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 	var departures []departure
 	for _, dep := range response.Actual {
 
-		delay, err := utils.MinutesBetween(dep.PlannedTime, dep.ActualTime)
+		// use planned time if actual time is empty
+		actualTime := dep.ActualTime
+		if actualTime == "" {
+			actualTime = dep.PlannedTime
+		}
+
+		delay, err := utils.MinutesBetween(dep.PlannedTime, actualTime)
 
 		if err != nil {
 			fmt.Print(fmt.Errorf("Failed to calculate delay for departure %s: %v", dep.Line, err))
@@ -49,7 +55,7 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 		departures = append(departures, departure{
 			Line:          dep.Line,
 			Destination:   dep.Destination,
-			DepartureTime: dep.ActualTime,
+			DepartureTime: actualTime,
 			DelayMinutes:  delay,
 		})
 	}
