@@ -37,13 +37,14 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 		// use planned time if actual time is empty
 		actualTime := dep.ActualTime
 		if actualTime == "" {
+			logger.Info("Falling back to planned time %s for line %s", dep.PlannedTime, dep.Line)
 			actualTime = dep.PlannedTime
 		}
 
 		delay, err := utils.MinutesBetween(dep.PlannedTime, actualTime)
 
 		if err != nil {
-			fmt.Print(fmt.Errorf("Failed to calculate delay for departure %s: %v", dep.Line, err))
+			logger.Info("Failed to calculate delay for departure %s: %v", dep.Line, err)
 			delay = 0 // If we can't calculate the delay, default to 0
 		}
 

@@ -17,6 +17,7 @@ func nextDeparturesHandler(w http.ResponseWriter, r *http.Request) {
 	nextDepartures, err := fetchNextDepartures(limit) // Default limit to 5 if not specified)
 
 	if err != nil {
+		logger.Info(fmt.Sprintf("Failed to fetch next departures from KVG: %v", err))
 		http.Error(w, fmt.Sprintf("Failed to fetch next departures from KVG: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -24,6 +25,7 @@ func nextDeparturesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(nextDepartures); err != nil {
+		logger.Info("Failed to encode JSON. %v", err)
 		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }

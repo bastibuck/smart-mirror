@@ -11,16 +11,15 @@ var GET_STEPS_COUNT int = 0
 
 func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 	if cachedData, found := garminCache.getSevenDaySteps(); found {
-		logger("Using cached seven day steps data %d", cachedData.Total)
+		logger.Info("Using cached seven day steps data %d", cachedData.Total)
 		return cachedData, nil
 	}
 
-	logger("Step error count: %d", GET_STEPS_COUNT)
+	logger.Info("Step error count: %d", GET_STEPS_COUNT)
 
 	today := time.Now()
 
 	if GET_STEPS_COUNT >= 3 {
-		logger("too many requests for daily steps, please try again later")
 		return sevenDayStepsModel{}, fmt.Errorf("too many requests for daily steps, please try again later")
 	}
 
@@ -31,7 +30,6 @@ func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 
 	if err != nil {
 		GET_STEPS_COUNT++
-		logger("Failed to get daily steps: %v", err)
 		return sevenDayStepsModel{}, fmt.Errorf("failed to get daily steps: %w", err)
 	}
 
@@ -54,7 +52,7 @@ func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 		Days:    days,
 	}
 
-	logger("Fetched steps: %d", total)
+	logger.Info("Fetched steps: %d", total)
 
 	garminCache.setSevenDaySteps(result)
 

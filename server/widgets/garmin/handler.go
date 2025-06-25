@@ -22,11 +22,13 @@ func stepsThisWeekHandler(res http.ResponseWriter, apiClient *garmin.API) {
 	steps, err := getSevenDaySteps(apiClient)
 
 	if err != nil {
+		logger.Info("Failed to get steps. %v", err)
 		http.Error(res, "Failed to get steps", http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(res).Encode(steps); err != nil {
+		logger.Info("Failed to encode JSON. %v", err)
 		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
 	}
 }
