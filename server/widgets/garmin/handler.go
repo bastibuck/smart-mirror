@@ -3,30 +3,9 @@ package garmin
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/bastibuck/go-garmin"
 )
-
-type stepsTodayHandlerResponse struct {
-	Steps int `json:"steps"`
-}
-
-func stepsTodayHandler(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
-	steps, err := getSevenDaySteps()
-
-	if err != nil {
-		http.Error(res, "Failed to get steps", http.StatusInternalServerError)
-		return
-	}
-
-	response := stepsTodayHandlerResponse{
-		Steps: steps.Days[len(steps.Days)-1].Steps,
-	}
-
-	if err := json.NewEncoder(res).Encode(response); err != nil {
-		http.Error(res, "Failed to encode JSON", http.StatusInternalServerError)
-	}
-}
 
 type stepsThisWeekHandlerResponse struct {
 	Total   int `json:"total"`
@@ -37,10 +16,10 @@ type stepsThisWeekHandlerResponse struct {
 	} `json:"days"`
 }
 
-func stepsThisWeekHandler(res http.ResponseWriter, req *http.Request) {
+func stepsThisWeekHandler(res http.ResponseWriter, apiClient *garmin.API) {
 	res.Header().Set("Content-Type", "application/json")
 
-	steps, err := getSevenDaySteps()
+	steps, err := getSevenDaySteps(apiClient)
 
 	if err != nil {
 		http.Error(res, "Failed to get steps", http.StatusInternalServerError)

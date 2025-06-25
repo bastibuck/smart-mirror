@@ -1,12 +1,18 @@
 package garmin
 
 import (
+	"net/http"
+
+	"github.com/bastibuck/go-garmin"
 	"github.com/go-chi/chi/v5"
+
 	"smartmirror.server/env"
 	"smartmirror.server/widgets"
 )
 
-type GarminWidget struct{}
+type GarminWidget struct {
+	ApiClient *garmin.API
+}
 
 var _ widgets.Widget = (*GarminWidget)(nil)
 
@@ -15,10 +21,22 @@ func (v *GarminWidget) SetupEnv() {
 }
 
 func (v *GarminWidget) SetupRouter(router *chi.Mux) {
-	router.HandleFunc("/steps/today", stepsTodayHandler)
-	router.HandleFunc("/steps/weekly", stepsThisWeekHandler)
+	router.HandleFunc("/steps/weekly", func(w http.ResponseWriter, r *http.Request) {
+		stepsThisWeekHandler(w, v.ApiClient)
+	})
 }
 
 func NewGarminWidget() *GarminWidget {
-	return &GarminWidget{}
+	client := garmin.NewClient()
+	err := client.Login(getEmail(), getPassword())
+
+	if err != nil {
+		panic("failed to login to Garmin")
+	}
+
+	api := garmin.NewAPI(client)
+
+	return &GarminWidget{
+		ApiClient: api,
+	}
 }
