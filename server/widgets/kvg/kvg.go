@@ -2,6 +2,7 @@ package kvg
 
 import (
 	"fmt"
+	"time"
 
 	"smartmirror.server/utils"
 )
@@ -26,6 +27,8 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 			Variance: 50,
 			Average:  1000,
 		},
+		Timeout: time.Second * 10,
+		Retries: 3,
 	})
 	if err != nil {
 		return nextDeparturesResponse{}, fmt.Errorf("Failed to fetch KVG stop info: %v", err)

@@ -15,6 +15,7 @@ type RelaxedHttpRequestOptions struct {
 	Headers  map[string]string
 	Delay    RelaxedHttpRequestDelay
 	Timeout  time.Duration
+	Retries  int
 }
 
 type RelaxedHttpRequestDelay struct {
@@ -50,7 +51,31 @@ func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 		time.Sleep(time.Duration(randomDelay) * time.Millisecond)
 	}
 
-	resp, err := client.Do(httpReq)
+	retries := 0
+	if req.Retries > 0 {
+		retries = req.Retries
+	}
+	maxTries := retries + 1 // at least one try
+
+	var resp *http.Response
+
+	try := 0
+	for try < maxTries {
+		if try > 0 {
+			fmt.Printf("[FETCH] Retrying failed request to %s\n", req.URL)
+		}
+
+		time.Sleep(time.Duration(try*try*500) * time.Millisecond) // incremental backoff
+
+		resp, err = client.Do(httpReq)
+
+		if err == nil {
+			break
+		}
+
+		try++
+	}
+
 	if err != nil {
 		return fmt.Errorf("failed to execute HTTP request: %w", err)
 	}
