@@ -7,7 +7,7 @@ import (
 	"github.com/bastibuck/go-garmin"
 )
 
-var GET_STEPS_COUNT int = 0
+var GET_STEPS_ERROR_COUNT int = 0
 
 func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 	if cachedData, found := garminCache.getSevenDaySteps(); found {
@@ -15,11 +15,11 @@ func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 		return cachedData, nil
 	}
 
-	logger.Info("Step error count: %d", GET_STEPS_COUNT)
+	logger.Info("Step error count: %d", GET_STEPS_ERROR_COUNT)
 
 	today := time.Now()
 
-	if GET_STEPS_COUNT >= 3 {
+	if GET_STEPS_ERROR_COUNT >= 3 {
 		return sevenDayStepsModel{}, fmt.Errorf("too many requests for daily steps, please try again later")
 	}
 
@@ -29,8 +29,13 @@ func getSevenDaySteps(apiClient *garmin.API) (sevenDayStepsModel, error) {
 	)
 
 	if err != nil {
-		GET_STEPS_COUNT++
+		GET_STEPS_ERROR_COUNT++
 		return sevenDayStepsModel{}, fmt.Errorf("failed to get daily steps: %w", err)
+	}
+
+	if GET_STEPS_ERROR_COUNT > 0 {
+		logger.Info("Decreasing Step error count by 1 due to successful request")
+		GET_STEPS_ERROR_COUNT--
 	}
 
 	total := 0
