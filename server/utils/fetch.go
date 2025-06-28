@@ -14,6 +14,7 @@ type RelaxedHttpRequestOptions struct {
 	Response interface{} // The response should be a pointer to a struct where the JSON response will be decoded into
 	Headers  map[string]string
 	Delay    RelaxedHttpRequestDelay
+	Timeout  time.Duration
 }
 
 type RelaxedHttpRequestDelay struct {
@@ -26,7 +27,9 @@ func RelaxedHttpRequest(req RelaxedHttpRequestOptions) error {
 		req.Method = "GET" // Default to GET if no method is specified
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: req.Timeout,
+	}
 	httpReq, err := http.NewRequest(req.Method, req.URL, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create HTTP request: %w", err)
