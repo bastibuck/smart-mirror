@@ -15,6 +15,7 @@ func statsHandler(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		logger.Info("Failed to fetch data from Strava: %v", err)
 		http.Error(res, fmt.Sprintf("Failed to fetch data from Strava: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -35,6 +36,7 @@ func lastActivityHandler(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		logger.Info("Failed to fetch last activity from Strava: %v", err)
 		http.Error(res, fmt.Sprintf("Failed to fetch last activity from Strava: %v", err), http.StatusInternalServerError)
 		return
 	}

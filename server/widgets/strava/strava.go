@@ -26,6 +26,7 @@ type athleteActivityResponseModel struct {
 
 func fetchStravaData() (annualStatsModel, error) {
 	if cachedData, found := stravaCache.getAnnualStats(); found {
+		logger.Info("Using cached data for annual data")
 		return cachedData, nil
 	}
 
@@ -37,7 +38,7 @@ func fetchStravaData() (annualStatsModel, error) {
 	err := refreshStravaAccessToken()
 
 	if err != nil {
-		return annualStatsModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return annualStatsModel{}, fmt.Errorf("fetchStravaData: Failed refreshing access token: %v", err)
 	}
 
 	var BEGINNING_OF_YEAR int64 = time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC).Unix()
@@ -119,6 +120,7 @@ func fetchStravaData() (annualStatsModel, error) {
 
 func fetchLastActivity() (lastActivityModel, error) {
 	if cachedData, found := stravaCache.getLastActivity(); found {
+		logger.Info("Using cached data for last activity: %v", cachedData.Name)
 		return cachedData, nil
 	}
 
@@ -129,7 +131,7 @@ func fetchLastActivity() (lastActivityModel, error) {
 	err := refreshStravaAccessToken()
 
 	if err != nil {
-		return lastActivityModel{}, fmt.Errorf("401") // TODO? make this return directly instead of passing outside as string?
+		return lastActivityModel{}, fmt.Errorf("fetchLastActivity: Failed to fresh access token: %v", err)
 	}
 
 	var response []athleteActivityResponseModel
@@ -154,8 +156,6 @@ func fetchLastActivity() (lastActivityModel, error) {
 		return lastActivityModel{}, fmt.Errorf("No activities found")
 	}
 
-	activity := response[0]
-
 	typeMap := map[string]string{
 		"Run":        "Run",
 		"VirtualRun": "Run",
@@ -171,6 +171,19 @@ func fetchLastActivity() (lastActivityModel, error) {
 		"Kitesurf": "Kite",
 
 		"Hike": "Hike",
+	}
+
+	// find first supported activity
+	var activity *athleteActivityResponseModel = nil
+	for i := range response {
+		if _, ok := typeMap[response[i].SportType]; ok {
+			activity = &response[i]
+			break
+		}
+	}
+
+	if activity == nil {
+		return lastActivityModel{}, fmt.Errorf("No supported activity found")
 	}
 
 	buf := []byte(activity.Map.SummaryPolyline)
@@ -212,6 +225,8 @@ func refreshStravaAccessToken() error {
 	if (GLOBAL_ExpiresAt - 1*int(time.Hour.Seconds())) > int(time.Now().Unix()) {
 		return nil
 	}
+
+	logger.Info("Access token expired, getting a new one.")
 
 	var response refreshTokenResponseModel
 
