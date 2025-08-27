@@ -17,7 +17,7 @@ type GarminWidget struct {
 var _ widgets.Widget = (*GarminWidget)(nil)
 
 func (v *GarminWidget) SetupEnv() {
-	env.ValidateEnvKeys(getEnvKeys())
+	// already done in NewGarminWidget because of login when creating the widget
 }
 
 func (v *GarminWidget) SetupRouter(router *chi.Mux) {
@@ -27,6 +27,8 @@ func (v *GarminWidget) SetupRouter(router *chi.Mux) {
 }
 
 func NewGarminWidget() *GarminWidget {
+	env.ValidateEnvKeys(getEnvKeys())
+
 	client := garmin.NewClient()
 	err := client.Login(getEmail(), getPassword())
 
