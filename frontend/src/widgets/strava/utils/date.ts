@@ -8,14 +8,23 @@ const formatDuration = (
   const showHours = options?.showHours ?? true;
   const showSeconds = options?.showSeconds ?? true;
 
-  const timeString = new Intl.DateTimeFormat("de-DE", {
-    timeZone: "UTC",
-    hour: showHours ? "2-digit" : undefined,
-    minute: "2-digit",
-    second: showSeconds ? "2-digit" : undefined,
-  }).format(new Date(seconds * 1000));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
 
-  return timeString;
+  const parts: string[] = [];
+
+  if (showHours) {
+    parts.push(hours.toString().padStart(2, "0"));
+  }
+
+  parts.push(minutes.toString().padStart(2, "0"));
+
+  if (showSeconds) {
+    parts.push(secs.toString().padStart(2, "0"));
+  }
+
+  return parts.join(":");
 };
 
 export { formatDuration };
