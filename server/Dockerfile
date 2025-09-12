@@ -14,7 +14,7 @@ FROM builder AS dev
 
 WORKDIR /app
 
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.62.0
 
 COPY . .
 
