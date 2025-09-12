@@ -1,8 +1,8 @@
-.PHONY: default start stop start-backend stop-backend rebuild-backend start-frontend stop-frontend rebuild-frontend
+.PHONY: default start stop start-backend stop-backend rebuild-backend start-frontend stop-frontend rebuild-frontend open close reload
 
 default: start
 
-# backend 
+# backend
 start-backend:
 	@if [ $$(docker ps -a --filter "name=^/smart-mirror-backend$$" -q) ]; then \
 		echo "Re-starting smart-mirror-backend..."; \
@@ -50,3 +50,12 @@ stop: stop-backend stop-frontend
 
 # rebuild all
 rebuild: rebuild-backend rebuild-frontend
+
+# browser (do not run with sudo)
+open:
+	DISPLAY=:0 chromium http://smartmirror.local --start-fullscreen --kiosk --no-first-run > /dev/null 2>&1 &
+
+close:
+	killall -q chromium
+
+reload: close open

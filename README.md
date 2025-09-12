@@ -28,13 +28,8 @@ This repo includes a Makefile that abstracts all commands.
 | `make stop-backend`     | stop only backend                    |
 | `make rebuild-frontend` | rebuild only frontend                |
 | `make rebuild-backend`  | rebuild only backend                 |
-
-### Some other helpful commands (for me mostly 😂)
-
-| Task               | Desc                                                                                               | Notes                   |
-| ------------------ | -------------------------------------------------------------------------------------------------- | ----------------------- |
-| Run app in browser | `DISPLAY=:0 chromium-browser http://smartmirror.local --start-fullscreen --kiosk --no-first-run &` | Hit enter after opening |
-| Stop browser       | `sudo killall chromium-browser`                                                                    |                         |
+| `make open`             | open app in browser                  |
+| `make close`            | close browser                        |
 
 ## Development
 
