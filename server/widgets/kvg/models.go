@@ -10,4 +10,5 @@ type departure struct {
 type nextDeparturesResponse struct {
 	StopName   string      `json:"stopName"`
 	Departures []departure `json:"departures"`
+	Alerts     []string    `json:"alerts"`
 }

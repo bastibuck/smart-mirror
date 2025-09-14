@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUtil } from "@/lib/api";
 import { z } from "zod/v4";
 import { cn } from "@/lib/utils";
+import { TriangleAlert } from "lucide-react";
 
 const NextDeparturesSchema = z.object({
   stopName: z.string(),
@@ -15,6 +16,7 @@ const NextDeparturesSchema = z.object({
       delayMinutes: z.number().optional(),
     }),
   ),
+  alerts: z.array(z.string()),
 });
 
 const NextDepartures: React.FC<
@@ -45,6 +47,16 @@ const NextDepartures: React.FC<
     <WidgetPositioner {...widgetPositionerProps}>
       <div className="inline-block space-y-1">
         <div className="text-3xl font-semibold">{data.stopName}</div>
+
+        {data.alerts.map((alert, index) => (
+          <div
+            className="mb-2 flex items-center gap-2 rounded border border-yellow-500 p-2 text-sm text-yellow-500"
+            key={index}
+          >
+            <TriangleAlert />
+            {alert}
+          </div>
+        ))}
 
         {data.departures.map((departure) => (
           <div

@@ -14,7 +14,10 @@ type kvgStopInfoResponse struct {
 		Destination string `json:"direction"`
 		PlannedTime string `json:"plannedTime"`
 		ActualTime  string `json:"actualTime"`
-	}
+	} `json:"actual"`
+	GeneralAlerts []struct {
+		Title string `json:"title"`
+	} `json:"generalAlerts"`
 }
 
 func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
@@ -34,7 +37,7 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 		return nextDeparturesResponse{}, fmt.Errorf("Failed to fetch KVG stop info: %v", err)
 	}
 
-	var departures []departure
+	departures := make([]departure, 0, len(response.Actual))
 	for _, dep := range response.Actual {
 
 		// use planned time if actual time is empty
@@ -69,8 +72,15 @@ func fetchNextDepartures(limit int) (nextDeparturesResponse, error) {
 		departuresLimit = len(departures)
 	}
 
+	// General alerts
+	alerts := make([]string, 0, len(response.GeneralAlerts))
+	for _, alert := range response.GeneralAlerts {
+		alerts = append(alerts, alert.Title)
+	}
+
 	return nextDeparturesResponse{
 		StopName:   response.StopName,
 		Departures: departures[:departuresLimit],
+		Alerts:     alerts,
 	}, nil
 }
