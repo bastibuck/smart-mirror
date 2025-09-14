@@ -7,7 +7,6 @@ import (
 	"smartmirror.server/router"
 
 	"smartmirror.server/widgets"
-	"smartmirror.server/widgets/garmin"
 	"smartmirror.server/widgets/kptncook"
 	"smartmirror.server/widgets/kvg"
 	"smartmirror.server/widgets/shared"
@@ -25,7 +24,6 @@ func SetupApp() {
 		shared.NewSharedWidget(),
 		version.NewVersionWidget(),
 		strava.NewStravaWidget(),
-		garmin.NewGarminWidget(),
 		kvg.NewKVGWidget(),
 		kptncook.NewKptnCookWidget(),
 		speedtest.NewSpeedtestWidget(),
