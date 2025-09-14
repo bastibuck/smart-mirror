@@ -6,13 +6,7 @@ import (
 )
 
 func speedtestHandler(res http.ResponseWriter, req *http.Request) {
-
-	speedtestResult, err := runSpeedtest()
-
-	if err != nil {
-		http.Error(res, "Failed to run speedtest", http.StatusInternalServerError)
-		return
-	}
+	speedtestResult := getSpeedTestResults(4)
 
 	res.Header().Set("Content-Type", "application/json")
 
