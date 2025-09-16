@@ -3,10 +3,11 @@ package speedtest
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 func speedtestHandler(res http.ResponseWriter, req *http.Request) {
-	speedtestResult := getSpeedTestResults(4)
+	speedtestResult := getSpeedTestResults(-4 * time.Hour)
 
 	res.Header().Set("Content-Type", "application/json")
 

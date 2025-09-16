@@ -10,6 +10,13 @@ import (
 
 type SpeedtestWidget struct{}
 
+type SpeedtestHistory struct {
+	speedtestResponse
+	Time time.Time
+}
+
+var speedtestHistory []SpeedtestHistory
+
 var _ widgets.Widget = (*SpeedtestWidget)(nil)
 
 func (v *SpeedtestWidget) SetupEnv() {
@@ -27,9 +34,15 @@ func NewSpeedtestWidget() *SpeedtestWidget {
 
 		if err != nil {
 			logger.Info("Error running speedtest: %v", err)
+			return
 		}
 
 		logger.Info("Speedtest result: %+v", speedTestResponse)
+
+		speedtestHistory = append(speedtestHistory, SpeedtestHistory{
+			Time:              time.Now(),
+			speedtestResponse: speedTestResponse,
+		})
 	})
 
 	return &SpeedtestWidget{}

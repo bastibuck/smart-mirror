@@ -14,14 +14,17 @@ func NewCron(widget string) Cron {
 
 	return Cron{
 		Schedule: func(taskName string, interval time.Duration, task func()) {
-			logger.Info("Scheduled '%s' to run every %s", taskName, time.Duration(interval).String())
+			logger.Info("'%s' scheduled to run every %s", taskName, time.Duration(interval).String())
 
 			ticker := time.NewTicker(interval)
 
 			go func() {
 				for range ticker.C {
-					logger.Info("Running scheduled task '%s'", taskName)
+					now := time.Now()
+
+					logger.Info("'%s' scheduled task started", taskName)
 					task()
+					logger.Info("'%s' scheduled task finished (took %s)", taskName, time.Since(now).String())
 				}
 			}()
 		},

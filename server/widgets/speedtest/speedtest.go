@@ -2,6 +2,7 @@ package speedtest
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/showwin/speedtest-go/speedtest"
 )
@@ -12,7 +13,6 @@ type speedtestResponse struct {
 	Ping     int64   `json:"ping"`
 }
 
-// TODO: run this on a regular basis like every 15 minutes and store results somewhere
 func runSpeedtest() (speedtestResponse, error) {
 	var speedtestClient = speedtest.New()
 
@@ -20,7 +20,6 @@ func runSpeedtest() (speedtestResponse, error) {
 	targets, _ := serverList.FindServer([]int{})
 
 	if len(targets) == 0 {
-		logger.Info("No speedtest servers found")
 		return speedtestResponse{}, fmt.Errorf("no speedtest servers found")
 	}
 
@@ -45,14 +44,26 @@ type LastResult struct {
 	Ping       int64   `json:"ping"`
 }
 
-func getSpeedTestResults(hours int64) (lastResults []LastResult) {
-	// TODO: read from a persistant place like a file, DB or smth
+func getSpeedTestResults(cutoffTime time.Duration) (lastResults []LastResult) {
+	now := time.Now()
+	cutoff := now.Add(cutoffTime)
 
-	return []LastResult{
-		{SecondsAgo: 3600 * 3, Download: 50.5, Upload: 10.2, Ping: 20},
-		{SecondsAgo: 3600 * 2, Download: 52.3, Upload: 11.0, Ping: 18},
-		{SecondsAgo: 3600 * 1, Download: 48.7, Upload: 9.8, Ping: 22},
-		{SecondsAgo: 0, Download: 51.0, Upload: 10.5, Ping: 19},
+	recent := make([]LastResult, 0)
+	for _, entry := range speedtestHistory {
+		if entry.Time.After(cutoff) {
+			recent = append(recent, LastResult{
+				SecondsAgo: int64(now.Sub(entry.Time).Seconds()),
+				Download:   entry.Download,
+				Upload:     entry.Upload,
+				Ping:       entry.Ping,
+			})
+		}
+
+		if entry.Time.Before(cutoff) {
+			// Since speedtestHistory is in chronological order, we can break early
+			break
+		}
 	}
 
+	return recent
 }
