@@ -38,7 +38,7 @@ func runSpeedtest() (speedtestResponse, error) {
 }
 
 type LastResult struct {
-	SecondsAgo int64   `json:"seconds_ago"`
+	SecondsAgo int64   `json:"secondsAgo"`
 	Download   float64 `json:"download"`
 	Upload     float64 `json:"upload"`
 	Ping       int64   `json:"ping"`

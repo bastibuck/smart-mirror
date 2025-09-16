@@ -29,11 +29,14 @@ func (v *SpeedtestWidget) SetupRouter(router *chi.Mux) {
 func NewSpeedtestWidget() *SpeedtestWidget {
 	cron := utils.NewCron("SPEEDTEST")
 
-	cron.Schedule("runSpeedTest", 15*time.Minute, func() {
+	cron.Schedule("runSpeedTest", 5*time.Minute, func() {
 		speedTestResponse, err := runSpeedtest()
 
 		if err != nil {
 			logger.Info("Error running speedtest: %v", err)
+			speedtestHistory = append(speedtestHistory, SpeedtestHistory{
+				Time: time.Now(),
+			})
 			return
 		}
 
