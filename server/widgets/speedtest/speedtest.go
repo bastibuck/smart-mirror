@@ -58,11 +58,6 @@ func getSpeedTestResults(cutoffTime time.Duration) (lastResults []LastResult) {
 				Ping:       entry.Ping,
 			})
 		}
-
-		if entry.Time.Before(cutoff) {
-			// Since speedtestHistory is in chronological order, we can break early
-			break
-		}
 	}
 
 	return recent
