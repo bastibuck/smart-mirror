@@ -46,6 +46,12 @@ const SpeedtestResults: React.FC<
     return <WidgetPositioner {...widgetPositionerProps} />;
   }
 
+  const maxDownload = Math.max(...data.map((entry) => entry.download));
+  const minDownload = Math.min(...data.map((entry) => entry.download));
+
+  const maxUpload = Math.max(...data.map((entry) => entry.upload));
+  const minUpload = Math.min(...data.map((entry) => entry.upload));
+
   return (
     <WidgetPositioner {...widgetPositionerProps}>
       <ChartContainer
@@ -94,14 +100,31 @@ const SpeedtestResults: React.FC<
               position="top"
               offset={12}
               className="fill-foreground"
-              fontSize={12}
               formatter={(value: number) =>
-                new Intl.NumberFormat("de-DE", {
-                  maximumFractionDigits: 0,
-                  unit: "megabit-per-second",
-                  unitDisplay: "narrow",
-                  style: "unit",
-                }).format(value)
+                maxDownload === value
+                  ? new Intl.NumberFormat("de-DE", {
+                      maximumFractionDigits: 0,
+                      unit: "megabit-per-second",
+                      unitDisplay: "narrow",
+                      style: "unit",
+                    }).format(value)
+                  : undefined
+              }
+            />
+
+            <LabelList
+              position="bottom"
+              offset={12}
+              className="fill-foreground"
+              formatter={(value: number) =>
+                minDownload === value
+                  ? new Intl.NumberFormat("de-DE", {
+                      maximumFractionDigits: 0,
+                      unit: "megabit-per-second",
+                      unitDisplay: "narrow",
+                      style: "unit",
+                    }).format(value)
+                  : undefined
               }
             />
           </Line>
@@ -121,14 +144,31 @@ const SpeedtestResults: React.FC<
               position="top"
               offset={12}
               className="fill-foreground"
-              fontSize={12}
               formatter={(value: number) =>
-                new Intl.NumberFormat("de-DE", {
-                  maximumFractionDigits: 0,
-                  unit: "megabit-per-second",
-                  unitDisplay: "narrow",
-                  style: "unit",
-                }).format(value)
+                maxUpload === value
+                  ? new Intl.NumberFormat("de-DE", {
+                      maximumFractionDigits: 0,
+                      unit: "megabit-per-second",
+                      unitDisplay: "narrow",
+                      style: "unit",
+                    }).format(value)
+                  : undefined
+              }
+            />
+
+            <LabelList
+              position="bottom"
+              offset={12}
+              className="fill-foreground"
+              formatter={(value: number) =>
+                minUpload === value
+                  ? new Intl.NumberFormat("de-DE", {
+                      maximumFractionDigits: 0,
+                      unit: "megabit-per-second",
+                      unitDisplay: "narrow",
+                      style: "unit",
+                    }).format(value)
+                  : undefined
               }
             />
           </Line>
