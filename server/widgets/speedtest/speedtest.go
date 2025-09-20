@@ -51,12 +51,16 @@ func getSpeedTestResults(cutoffTime time.Duration) (lastResults []LastResult) {
 	recent := make([]LastResult, 0)
 	for _, entry := range speedtestHistory {
 		if entry.Time.After(cutoff) {
-			recent = append(recent, LastResult{
+			recent = append([]LastResult{{
 				SecondsAgo: int64(now.Sub(entry.Time).Seconds()),
 				Download:   entry.Download,
 				Upload:     entry.Upload,
 				Ping:       entry.Ping,
-			})
+			}}, recent...) // chronological order
+		}
+
+		if entry.Time.Before(cutoff) {
+			break // history is in reverse chronological order, so we can stop checking once we hit an old entry
 		}
 	}
 

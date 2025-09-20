@@ -55,19 +55,24 @@ func NewSpeedtestWidget() *SpeedtestWidget {
 
 		if err != nil {
 			logger.Info("Error running speedtest: %v", err)
-			speedtestHistory = append(speedtestHistory, SpeedtestHistory{
-				Time: time.Now(),
-			})
+			addSpeedtestResultToHistory(speedtestResponse{}) // add empty response
 			return
 		}
 
 		logger.Info("Speedtest result: %+v", speedTestResponse)
 
-		speedtestHistory = append(speedtestHistory, SpeedtestHistory{
-			Time:              time.Now(),
-			speedtestResponse: speedTestResponse,
-		})
+		addSpeedtestResultToHistory(speedTestResponse)
 	})
 
 	return &SpeedtestWidget{}
+}
+
+func addSpeedtestResultToHistory(result speedtestResponse) {
+	// always prepend new result so we can keep the history in reverse chronological order to break early on a GET
+	speedtestHistory = append([]SpeedtestHistory{
+		{
+			Time:              time.Now(),
+			speedtestResponse: result,
+		},
+	}, speedtestHistory...)
 }
