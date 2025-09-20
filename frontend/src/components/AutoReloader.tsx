@@ -17,7 +17,7 @@ const AutoReloader: React.FC = () => {
       );
 
       if (env.VITE_VERSION_HASH !== result.versionHash) {
-        window.location.reload();
+        window.location.href = "/";
       }
 
       return result.versionHash;
