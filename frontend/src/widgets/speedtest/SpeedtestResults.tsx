@@ -46,11 +46,13 @@ const SpeedtestResults: React.FC<
     return <WidgetPositioner {...widgetPositionerProps} />;
   }
 
-  const maxDownload = Math.max(...data.map((entry) => entry.download));
-  const minDownload = Math.min(...data.map((entry) => entry.download));
+  const downloads = data.map((entry) => entry.download);
+  const uploads = data.map((entry) => entry.upload);
 
-  const maxUpload = Math.max(...data.map((entry) => entry.upload));
-  const minUpload = Math.min(...data.map((entry) => entry.upload));
+  const maxDownload = Math.max(...downloads);
+  const minDownload = Math.min(...downloads);
+  const maxUpload = Math.max(...uploads);
+  const minUpload = Math.min(...uploads);
 
   return (
     <WidgetPositioner {...widgetPositionerProps}>
@@ -100,32 +102,14 @@ const SpeedtestResults: React.FC<
               position="top"
               offset={12}
               className="fill-foreground"
-              formatter={(value: number) =>
-                maxDownload === value
-                  ? new Intl.NumberFormat("de-DE", {
-                      maximumFractionDigits: 0,
-                      unit: "megabit-per-second",
-                      unitDisplay: "narrow",
-                      style: "unit",
-                    }).format(value)
-                  : undefined
-              }
+              formatter={mbpsFormatter(maxDownload)}
             />
 
             <LabelList
               position="bottom"
               offset={12}
               className="fill-foreground"
-              formatter={(value: number) =>
-                minDownload === value
-                  ? new Intl.NumberFormat("de-DE", {
-                      maximumFractionDigits: 0,
-                      unit: "megabit-per-second",
-                      unitDisplay: "narrow",
-                      style: "unit",
-                    }).format(value)
-                  : undefined
-              }
+              formatter={mbpsFormatter(minDownload)}
             />
           </Line>
 
@@ -144,32 +128,14 @@ const SpeedtestResults: React.FC<
               position="top"
               offset={12}
               className="fill-foreground"
-              formatter={(value: number) =>
-                maxUpload === value
-                  ? new Intl.NumberFormat("de-DE", {
-                      maximumFractionDigits: 0,
-                      unit: "megabit-per-second",
-                      unitDisplay: "narrow",
-                      style: "unit",
-                    }).format(value)
-                  : undefined
-              }
+              formatter={mbpsFormatter(maxUpload)}
             />
 
             <LabelList
               position="bottom"
               offset={12}
               className="fill-foreground"
-              formatter={(value: number) =>
-                minUpload === value
-                  ? new Intl.NumberFormat("de-DE", {
-                      maximumFractionDigits: 0,
-                      unit: "megabit-per-second",
-                      unitDisplay: "narrow",
-                      style: "unit",
-                    }).format(value)
-                  : undefined
-              }
+              formatter={mbpsFormatter(minUpload)}
             />
           </Line>
         </LineChart>
@@ -179,3 +145,16 @@ const SpeedtestResults: React.FC<
 };
 
 export default SpeedtestResults;
+
+const mbpsFormatter = (value: number) => (target: number) => {
+  if (value !== target) {
+    return undefined;
+  }
+
+  return new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 0,
+    unit: "megabit-per-second",
+    unitDisplay: "narrow",
+    style: "unit",
+  }).format(value);
+};
