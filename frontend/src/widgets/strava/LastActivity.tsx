@@ -152,7 +152,8 @@ const SharedInfo: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
       <StatValue
         inline
         label="km"
-        value={(activity.distance_m / 1000).toFixed(1)}
+        value={activity.distance_m / 1000}
+        decimals={1}
       />
     </>
   );
@@ -215,11 +216,8 @@ const Ride: React.FC<{ activity: LastActivityType }> = ({ activity }) => {
       <StatValue
         inline
         label="⌀ km/h"
-        value={(
-          activity.distance_m /
-          1000 /
-          (activity.moving_time_s / 60 / 60)
-        ).toFixed(1)}
+        value={activity.distance_m / 1000 / (activity.moving_time_s / 60 / 60)}
+        decimals={1}
       />
     </>
   );
