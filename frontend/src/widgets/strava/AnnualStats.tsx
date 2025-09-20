@@ -53,11 +53,8 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
   return (
     <WidgetPositioner {...widgetPositionerProps}>
       <StatCategory name={<TypeIcon type="Run" />}>
-        <StatValue label="#" value={data.running.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.running.distance_m / 1000).toString()}
-        />
+        <StatValue label="#" value={data.running.count} />
+        <StatValue label="km" value={data.running.distance_m / 1000} />
         <StatValue
           label="hh:mm"
           value={formatDuration(data.running.moving_time_s, {
@@ -67,11 +64,8 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
       </StatCategory>
 
       <StatCategory name={<TypeIcon type="Ride" />}>
-        <StatValue label="#" value={data.cycling.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.cycling.distance_m / 1000).toString()}
-        />
+        <StatValue label="#" value={data.cycling.count} />
+        <StatValue label="km" value={data.cycling.distance_m / 1000} />
         <StatValue
           label="hh:mm"
           value={formatDuration(data.cycling.moving_time_s, {
@@ -81,11 +75,8 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
       </StatCategory>
 
       <StatCategory name={<TypeIcon type="Hike" />}>
-        <StatValue label="#" value={data.hiking.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.hiking.distance_m / 1000).toString()}
-        />
+        <StatValue label="#" value={data.hiking.count} />
+        <StatValue label="km" value={data.hiking.distance_m / 1000} />
         <StatValue
           label="hh:mm"
           value={formatDuration(data.hiking.moving_time_s, {
@@ -95,11 +86,8 @@ const AnnualStats: React.FC<React.ComponentProps<typeof WidgetPositioner>> = ({
       </StatCategory>
 
       <StatCategory name={<TypeIcon type="Kite" />}>
-        <StatValue label="#" value={data.kiting.count.toString()} />
-        <StatValue
-          label="km"
-          value={Math.floor(data.kiting.distance_m / 1000).toString()}
-        />
+        <StatValue label="#" value={data.kiting.count} />
+        <StatValue label="km" value={data.kiting.distance_m / 1000} />
         <StatValue
           label="hh:mm"
           value={formatDuration(data.kiting.moving_time_s, {

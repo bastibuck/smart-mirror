@@ -15,9 +15,17 @@ const StatCategory: React.FC<
 
 const StatValue: React.FC<{
   label: string;
-  value: string;
+  value: string | number;
   inline?: boolean;
-}> = ({ label, value, inline = false }) => {
+  decimals?: number;
+}> = ({ label, value, inline = false, decimals = 0 }) => {
+  const formattedValue =
+    typeof value === "number"
+      ? new Intl.NumberFormat(undefined, {
+          maximumFractionDigits: decimals,
+        }).format(value)
+      : value;
+
   return (
     <div
       className={cn({
@@ -25,7 +33,7 @@ const StatValue: React.FC<{
         "flex items-baseline space-x-1": inline === true,
       })}
     >
-      <div className="text-3xl font-semibold">{value}</div>
+      <div className="text-3xl font-semibold">{formattedValue}</div>
       <div className="text-muted-foreground text-base leading-2">{label}</div>
     </div>
   );
