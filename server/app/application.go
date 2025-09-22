@@ -13,6 +13,7 @@ import (
 	"smartmirror.server/widgets/speedtest"
 	"smartmirror.server/widgets/strava"
 	"smartmirror.server/widgets/version"
+	"smartmirror.server/widgets/windspeed"
 )
 
 func SetupApp() {
@@ -27,6 +28,7 @@ func SetupApp() {
 		kvg.NewKVGWidget(),
 		kptncook.NewKptnCookWidget(),
 		speedtest.NewSpeedtestWidget(),
+		windspeed.NewWindspeedWidget(),
 	}, router)
 
 	// Start the server
