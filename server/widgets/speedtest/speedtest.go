@@ -14,18 +14,30 @@ type speedtestResponse struct {
 	Ping     int64   `json:"ping"`
 }
 
+var bannedServerIds = map[string]bool{
+	"7803": true,
+}
+
 func runSpeedtest() (speedtestResponse, error) {
 	var speedtestClient = speedtest.New()
 
 	serverList, _ := speedtestClient.FetchServers()
 	targets := *serverList.Available()
 
-	if len(targets) == 0 {
+	// filter out banned servers
+	filteredTargets := make([]*speedtest.Server, 0, len(targets))
+	for _, server := range targets {
+		if !bannedServerIds[server.ID] {
+			filteredTargets = append(filteredTargets, server)
+		}
+	}
+
+	if len(filteredTargets) == 0 {
 		return speedtestResponse{}, fmt.Errorf("no speedtest servers found")
 	}
 
 	// get random server from list
-	targetServer := targets[rand.Intn(len(targets))]
+	targetServer := filteredTargets[rand.Intn(len(filteredTargets))]
 
 	logger.Info("Using server: [%s] %s by %s", targetServer.ID, targetServer.Name, targetServer.Sponsor)
 
