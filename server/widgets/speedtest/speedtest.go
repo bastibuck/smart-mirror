@@ -2,6 +2,7 @@ package speedtest
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/showwin/speedtest-go/speedtest"
@@ -17,14 +18,16 @@ func runSpeedtest() (speedtestResponse, error) {
 	var speedtestClient = speedtest.New()
 
 	serverList, _ := speedtestClient.FetchServers()
-	targets, _ := serverList.FindServer([]int{})
+	targets := *serverList.Available()
 
 	if len(targets) == 0 {
 		return speedtestResponse{}, fmt.Errorf("no speedtest servers found")
 	}
 
-	// run against first server only
-	targetServer := targets[0]
+	// get random server from list
+	targetServer := targets[rand.Intn(len(targets))]
+
+	logger.Info("Using server: [%s] %s by %s", targetServer.ID, targetServer.Name, targetServer.Sponsor)
 
 	targetServer.PingTest(nil)
 	targetServer.DownloadTest()
