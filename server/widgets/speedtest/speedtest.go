@@ -8,10 +8,17 @@ import (
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
+type serverModel struct {
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Sponsor string `json:"sponsor"`
+}
+
 type speedtestResponse struct {
-	Download float64 `json:"download"`
-	Upload   float64 `json:"upload"`
-	Ping     int64   `json:"ping"`
+	Server   serverModel `json:"server"`
+	Download float64     `json:"download"`
+	Upload   float64     `json:"upload"`
+	Ping     int64       `json:"ping"`
 }
 
 var bannedServerIds = map[string]bool{
@@ -39,13 +46,16 @@ func runSpeedtest() (speedtestResponse, error) {
 	// get random server from list
 	targetServer := filteredTargets[rand.Intn(len(filteredTargets))]
 
-	logger.Info("Using server: [%s] %s by %s", targetServer.ID, targetServer.Name, targetServer.Sponsor)
-
 	targetServer.PingTest(nil)
 	targetServer.DownloadTest()
 	targetServer.UploadTest()
 
 	return speedtestResponse{
+		Server: serverModel{
+			ID:      targetServer.ID,
+			Name:    targetServer.Name,
+			Sponsor: targetServer.Sponsor,
+		},
 		Download: targetServer.DLSpeed.Mbps(),
 		Upload:   targetServer.ULSpeed.Mbps(),
 		Ping:     targetServer.Latency.Milliseconds(),

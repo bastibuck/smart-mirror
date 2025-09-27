@@ -50,7 +50,7 @@ func NewSpeedtestWidget() *SpeedtestWidget {
 		return &SpeedtestWidget{}
 	}
 
-	cron.Schedule("runSpeedTest", 5*time.Minute, func() {
+	cron.Schedule("runSpeedTest", 6*time.Minute, func() {
 		speedTestResponse, err := runSpeedtest()
 
 		if err != nil {
