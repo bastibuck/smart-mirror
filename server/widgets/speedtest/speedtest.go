@@ -22,7 +22,9 @@ type speedtestResponse struct {
 }
 
 var bannedServerIds = map[string]bool{
-	"7803": true,
+	"7803":  true,
+	"51487": true,
+	"45664": true,
 }
 
 func runSpeedtest() (speedtestResponse, error) {
