@@ -29,8 +29,8 @@ func getCurrentWind() (windspeedModel, error) {
 	}
 
 	return windspeedModel{
-		WindSpeedKn:     response.Current.WindSpeed10m,
-		GustSpeedKn:     response.Current.WindGusts10m,
-		WindDirectionKn: response.Current.WindDirection10m,
+		WindSpeedKn:      response.Current.WindSpeed10m,
+		GustSpeedKn:      response.Current.WindGusts10m,
+		WindDirectionDeg: response.Current.WindDirection10m,
 	}, nil
 }
