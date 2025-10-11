@@ -2,35 +2,62 @@ package speedtest
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
+type serverModel struct {
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Sponsor string `json:"sponsor"`
+}
+
 type speedtestResponse struct {
-	Download float64 `json:"download"`
-	Upload   float64 `json:"upload"`
-	Ping     int64   `json:"ping"`
+	Server   serverModel `json:"server"`
+	Download float64     `json:"download"`
+	Upload   float64     `json:"upload"`
+	Ping     int64       `json:"ping"`
+}
+
+var bannedServerIds = map[string]bool{
+	"7803":  true,
+	"51487": true,
+	"45664": true,
 }
 
 func runSpeedtest() (speedtestResponse, error) {
 	var speedtestClient = speedtest.New()
 
 	serverList, _ := speedtestClient.FetchServers()
-	targets, _ := serverList.FindServer([]int{})
+	targets := *serverList.Available()
 
-	if len(targets) == 0 {
+	// filter out banned servers
+	filteredTargets := make([]*speedtest.Server, 0, len(targets))
+	for _, server := range targets {
+		if !bannedServerIds[server.ID] {
+			filteredTargets = append(filteredTargets, server)
+		}
+	}
+
+	if len(filteredTargets) == 0 {
 		return speedtestResponse{}, fmt.Errorf("no speedtest servers found")
 	}
 
-	// run against first server only
-	targetServer := targets[0]
+	// get random server from list
+	targetServer := filteredTargets[rand.Intn(len(filteredTargets))]
 
 	targetServer.PingTest(nil)
 	targetServer.DownloadTest()
 	targetServer.UploadTest()
 
 	return speedtestResponse{
+		Server: serverModel{
+			ID:      targetServer.ID,
+			Name:    targetServer.Name,
+			Sponsor: targetServer.Sponsor,
+		},
 		Download: targetServer.DLSpeed.Mbps(),
 		Upload:   targetServer.ULSpeed.Mbps(),
 		Ping:     targetServer.Latency.Milliseconds(),

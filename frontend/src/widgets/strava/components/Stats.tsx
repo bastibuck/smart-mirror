@@ -23,6 +23,7 @@ const StatValue: React.FC<{
     typeof value === "number"
       ? new Intl.NumberFormat(undefined, {
           maximumFractionDigits: decimals,
+          minimumFractionDigits: decimals,
         }).format(value)
       : value;
 
