@@ -1,7 +1,7 @@
 package windspeed
 
 type windspeedModel struct {
-	WindSpeedKn      float64 `json:"wind_speed_kn"`
-	GustSpeedKn      float64 `json:"gust_speed_kn"`
-	WindDirectionDeg int16   `json:"wind_direction_deg"`
+	WindSpeedKn      float64 `json:"windSpeedKn"`
+	GustSpeedKn      float64 `json:"gustSpeedKn"`
+	WindDirectionDeg int16   `json:"windDirectionDeg"`
 }
