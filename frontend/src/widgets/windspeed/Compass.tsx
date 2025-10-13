@@ -35,7 +35,7 @@ const Compass: React.FC<CompassProps> = ({
       <div className="flex flex-col items-center gap-4">
         <div className="relative" style={{ width: size, height: size }}>
           {/* Compass circle */}
-          <div className="border-border bg-background absolute inset-0">
+          <div className="border-border bg-background absolute inset-0 overflow-hidden">
             {/* Cardinal direction markers */}
             {cardinalDirections.map(({ label, angle }) => {
               const isMainDirection = angle % 90 === 0;
