@@ -21,6 +21,7 @@ func setupObservability() {
 		// Adds request headers and IP for users,
 		// visit: https://docs.sentry.io/platforms/go/data-management/data-collected/ for more info
 		SendDefaultPII: true,
+		EnableLogs:     true,
 	})
 
 	if err != nil {
