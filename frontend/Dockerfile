@@ -1,5 +1,6 @@
 # Base stage
 FROM node:24-slim AS base
+RUN apt-get update && apt-get install -y ca-certificates # install SSL certificates
 
 ARG VERSION_HASH
 ENV VITE_VERSION_HASH=$VERSION_HASH
