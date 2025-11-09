@@ -20,10 +20,12 @@ require (
 	github.com/chelnak/ysmrr v0.5.0 // indirect
 	github.com/dghubble/oauth1 v0.7.3 // indirect
 	github.com/fatih/color v1.18.0 // indirect
+	github.com/getsentry/sentry-go v0.36.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/showwin/speedtest-go v1.7.10 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 )

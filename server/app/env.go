@@ -10,6 +10,7 @@ import (
 
 const (
 	envServerPort = "SERVER_PORT"
+	envSentryDsn  = "SENTRY_DSN"
 )
 
 func setupAppEnv() {
@@ -24,4 +25,8 @@ func setupAppEnv() {
 
 func getServerPort() string {
 	return os.Getenv(envServerPort)
+}
+
+func getSentryDsn() string {
+	return os.Getenv(envSentryDsn)
 }
