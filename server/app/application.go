@@ -18,6 +18,7 @@ import (
 
 func SetupApp() {
 	setupAppEnv()
+	setupObservability()
 
 	router := router.SetupRouter()
 

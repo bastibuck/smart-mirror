@@ -26,7 +26,7 @@ export default defineConfig(async ({ mode }) => {
       tailwindcss(),
       sentryVitePlugin({
         org: "bastibuck-org",
-        project: "smartmirror",
+        project: "smartmirror-frontend",
         authToken: import.meta.env.SENTRY_AUTH_TOKEN,
         disable: !import.meta.env.SENTRY_AUTH_TOKEN,
       }),
