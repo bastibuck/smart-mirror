@@ -10,7 +10,7 @@ import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
-  import.meta.env = loadEnv(mode, process.cwd());
+  import.meta.env = loadEnv(mode, process.cwd(), ["VITE_", "SENTRY_"]);
   await import("./src/env");
 
   return {
@@ -25,10 +25,10 @@ export default defineConfig(async ({ mode }) => {
       react(),
       tailwindcss(),
       sentryVitePlugin({
-        org: "bastibuck-org", // Your Sentry organization slug
-        project: "smartmirror", // Your Sentry project name
-        authToken:
-          "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",
+        org: "bastibuck-org",
+        project: "smartmirror",
+        authToken: import.meta.env.SENTRY_AUTH_TOKEN,
+        disable: !import.meta.env.PROD && !import.meta.env.SENTRY_AUTH_TOKEN,
       }),
     ],
 

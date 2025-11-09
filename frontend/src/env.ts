@@ -6,7 +6,9 @@ import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod/v4";
 
 const env = createEnv({
-  server: {},
+  server: {
+    SENTRY_AUTH_TOKEN: z.string().default("notset"),
+  },
 
   /**
    * The prefix that client-side variables must have. This is enforced both at
@@ -30,6 +32,10 @@ const env = createEnv({
   emptyStringAsUndefined: true,
 
   runtimeEnvStrict: {
+    // Server variables
+    SENTRY_AUTH_TOKEN: import.meta.env.SENTRY_AUTH_TOKEN,
+
+    // Client variables
     VITE_SERVER_URL: import.meta.env.VITE_SERVER_URL,
     VITE_IS_PROD: import.meta.env.PROD,
     VITE_VERSION_HASH: import.meta.env.VITE_VERSION_HASH,
