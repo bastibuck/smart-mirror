@@ -28,7 +28,7 @@ export default defineConfig(async ({ mode }) => {
         org: "bastibuck-org",
         project: "smartmirror",
         authToken: import.meta.env.SENTRY_AUTH_TOKEN,
-        disable: !import.meta.env.PROD || !import.meta.env.SENTRY_AUTH_TOKEN,
+        disable: !import.meta.env.SENTRY_AUTH_TOKEN,
       }),
     ],
 
