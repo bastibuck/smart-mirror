@@ -1,0 +1,1 @@
+This pull request introduces a script to perform git fetch, rebase, and rebuild the project as outlined in Issue #42.
