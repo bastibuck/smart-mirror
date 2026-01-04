@@ -17,8 +17,8 @@ stop-backend:
 	docker stop smart-mirror-backend
 
 rebuild-backend:
-	docker stop smart-mirror-backend
-	docker container rm smart-mirror-backend
+	-docker stop smart-mirror-backend
+	-docker container rm smart-mirror-backend
 	docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-backend ./server
 	docker run -d --name smart-mirror-backend -p 8080:8080 smart-mirror-backend
 
@@ -37,8 +37,8 @@ stop-frontend:
 	docker stop smart-mirror-frontend
 
 rebuild-frontend: 
-	docker stop smart-mirror-frontend
-	docker container rm smart-mirror-frontend
+	-docker stop smart-mirror-frontend
+	-docker container rm smart-mirror-frontend
 	docker build --build-arg VERSION_HASH=$$(git rev-parse --short HEAD) -t smart-mirror-frontend ./frontend
 	docker run -d --name smart-mirror-frontend -p 80:80 smart-mirror-frontend
 
