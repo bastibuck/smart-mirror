@@ -12,6 +12,9 @@ const useSlidingNavigate = () => {
         viewTransition: {
           types: [direction === "next" ? "slide-left" : "slide-right"],
         },
+      }).catch((reason) => {
+        // eslint-disable-next-line no-console
+        console.error(`Navigation to ${to} failed: ${reason}`);
       }),
     [navigate],
   );
@@ -33,6 +36,8 @@ const useAutoRotateRoutes = () => {
           10,
         );
         if (typeof currentPageNumber !== "number" || isNaN(currentPageNumber)) {
+          // eslint-disable-next-line no-console
+          console.error("Current page number is not a valid number");
           return;
         }
 
@@ -85,7 +90,12 @@ const useDirectionalNavigate = () => {
 
         const allRoutes = new Set(Object.keys(routesByPath));
         if (!allRoutes.has(to)) {
-          toast.error(`No ${direction} page found`, {
+          const msg = `No ${direction} page found`;
+
+          // eslint-disable-next-line no-console
+          console.error(msg);
+
+          toast.error(msg, {
             className: "!bg-destructive !text-foreground",
           });
           return;
